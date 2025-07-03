@@ -9,8 +9,5 @@ I don't even know how many times I have started and rewrote this engine, but her
 WARNING: IT'LL CHANGE:
 
 ```
-$ mkdir build && cmake .. -G Ninja
-```
-```
-$ ninja && ./bin/mol
+$ chmod +x ./build.sh && ./build.sh
 ```
