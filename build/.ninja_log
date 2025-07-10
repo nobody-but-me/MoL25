@@ -1,0 +1,10 @@
+# ninja log v5
+63	482	1751892844543479106	CMakeFiles/mol.dir/engine/libs/glad.c.o	f2d5d125ec872d03
+26	112	1752177670768700740	build.ninja	ccd4f04d1f947501
+1040	1311	1751892845363493315	bin/mol	d55a087d55847e1e
+46	1236	1752177408676717812	CMakeFiles/mol.dir/engine/src/src/engine.cpp.o	d696cd54c8157e05
+1	34	1752177670352694409	/home/lovelace/Documents/_hobbies/_programming/_cpp/mol25/build/CMakeFiles/cmake.verify_globs	16cad5f09354a997
+63	1040	1751892845087488530	CMakeFiles/mol.dir/engine/src/include/MOL/window_manager.cpp.o	8468bd7bb52d09de
+36	456	1752177670768700740	build.ninja	ccd4f04d1f947501
+1	37	0	/home/lovelace/Documents/_hobbies/_programming/_cpp/mol25/build/CMakeFiles/cmake.verify_globs	16cad5f09354a997
+47	628	1752177671392710236	bin/mol	ca9f61dc96f3fb40
