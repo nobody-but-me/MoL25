@@ -1,9 +1,7 @@
 
 #!/usr/bin/env bash
 
-cd ./build/
-
-rm -rf *
+rm -rf ./build/
 
 cd ..
 

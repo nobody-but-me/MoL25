@@ -17,8 +17,8 @@ namespace Core {
 	    GLFWwindow *buffer; // the actual opengl window;
 	} WINDOW;
 	
-	int destroy_window(WINDOW &window);
-	int create_window(WINDOW &window);
+	GLFWwindow *create_window(unsigned int w, unsigned int h, std::string title);
+	int destroy_window(WINDOW &win);
     }
     
     class Engine {
@@ -26,6 +26,13 @@ namespace Core {
 	    const std::string  DEFAULT_WINDOW_TITLE  = "MoL Game Engine";
 	    const unsigned int DEFAULT_WINDOW_HEIGHT = 600;
 	    const unsigned int DEFAULT_WINDOW_WIDTH  = 800;
+	    WindowManager::WINDOW window;
+	    
+	    double previous_time = 0.0f;
+	    double current_time = 0.0f;
+	    double delta = 1 /60.0f;
+	    double updates = 0.0f;
+	    double time = 0.0f;
 	    
 	public:
 	    Engine();
