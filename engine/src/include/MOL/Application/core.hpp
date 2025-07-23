@@ -5,11 +5,17 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-namespace Core {
+#include <MOL/Utils/singleton.hpp>
+
+namespace Core
+{
     
-    namespace WindowManager {
+    namespace WindowManager
+    {
 	
 	typedef struct {
+	    unsigned int IDEAL_HEIGHT;
+	    unsigned int IDEAL_WIDTH;
 	    unsigned int height;
 	    unsigned int width;
 	    std::string title;
@@ -17,11 +23,12 @@ namespace Core {
 	    GLFWwindow *buffer; // the actual opengl window;
 	} WINDOW;
 	
-	GLFWwindow *create_window(unsigned int w, unsigned int h, std::string title);
+	WindowManager::WINDOW create_window(unsigned int w, unsigned int h, std::string title);
 	int destroy_window(WINDOW &win);
     }
     
-    class Engine {
+    class Engine: public Utils::Singleton<Engine>
+    {
 	private:
 	    const std::string  DEFAULT_WINDOW_TITLE  = "MoL Game Engine";
 	    const unsigned int DEFAULT_WINDOW_HEIGHT = 600;
@@ -35,13 +42,13 @@ namespace Core {
 	    double time = 0.0f;
 	    
 	public:
-	    Engine();
+	    int init();
 	    
-	    void update(double delta_time);
+	    void loop(double delta_time);
 	    void render();
 	    void ready();
 	    
-	    ~Engine();
+	    int destroy();
     };
 }
 
