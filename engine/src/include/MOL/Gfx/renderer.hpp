@@ -3,6 +3,7 @@
 #define RENDERER_H
 
 #include <MOL/Utils/singleton.hpp>
+#include <GLFW/glfw3.h>
 
 namespace Gfx
 {
@@ -15,7 +16,8 @@ namespace Gfx
 	    
 	public:
 	    
-	    
+	    // int init();
+	    // int destroy();
 	    
     };
     
