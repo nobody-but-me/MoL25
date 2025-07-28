@@ -2,24 +2,28 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include <MOL/Utils/singleton.hpp>
-#include <GLFW/glfw3.h>
+#include <iostream>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
+
+#include <MOL/Gfx/object.hpp>
+#include <molson.h>
 
 namespace Gfx
 {
     
-    class Renderer: public Utils::Singleton<Renderer>
+    namespace Renderer // TODO: Perhaps that's not the best approach. Perhaps a renderer class would be more correct.
     {
-	private:
-	    
-	    
-	    
-	public:
-	    
-	    // int init();
-	    // int destroy();
-	    
-    };
+	
+	int init_rect_atom(Atom *rect_object, std::string rect_name);
+	
+	int init_atom_vertexes(Atom *object, unsigned int vertex_amount);
+	int set_atom_transform(Atom *object, Shader *shader);
+	void render_atom(Atom *object, Shader *shader);
+	
+    }
     
 }
 

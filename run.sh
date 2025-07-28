@@ -4,9 +4,9 @@
 if [ "$(type -t ./build/bin/mol)" = "file" ]; then
     echo -e "\n[INFO]: RUNNING..."
     
-    cd ./build
+    cd ./build/bin/
     
-    ./bin/mol
+    ./mol
     
     cd ..
 else

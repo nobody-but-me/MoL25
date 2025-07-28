@@ -16,7 +16,7 @@ file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
 find_package(glm CONFIG REQUIRED)
 
 add_executable(mol ${SRC_FILES} ${CMAKE_SOURCE_DIR}/engine/libs/glad.c)
-target_compile_options(mol PRIVATE -Wall -Werror)
+target_compile_options(mol PRIVATE -Wall -Werror -Wno-pointer-arith)
 target_link_libraries(mol PRIVATE glfw glm::glm)
 
 

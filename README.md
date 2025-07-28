@@ -16,4 +16,7 @@ $ chmod +x ./build.sh && ./build.sh
 # TODO:
 
  - [x] Singleton pattern;
- - [ ] Renderer;
+ - [ ] Simple Renderer;
+ - [ ] Global coordinates;
+ - [ ] Simple input handler;
+ - [ ] Camera movement manipulator;

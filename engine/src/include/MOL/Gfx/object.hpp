@@ -1,0 +1,30 @@
+
+#ifndef OBJECTS_H
+#define OBJECTS_H
+
+#include <string>
+
+#include <glm/mat4x4.hpp>
+#include <glm/vec2.hpp>
+
+typedef struct
+{
+    
+    bool is_textured;
+    bool initialized;
+    std::string name;
+    
+    unsigned int indices;
+    unsigned int vbo;
+    unsigned int vao;
+    unsigned int ebo;
+    
+    glm::mat4 transform;
+    glm::vec3 position;
+    glm::vec3 rotation;
+    glm::vec2 scale;
+    
+    glm::vec4 colour;
+} Atom;
+
+#endif//OBJECTS_H
