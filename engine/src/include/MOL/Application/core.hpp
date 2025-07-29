@@ -23,8 +23,10 @@ namespace Core
 	    GLFWwindow *buffer; // the actual opengl window;
 	} WINDOW;
 	
-	WindowManager::WINDOW create_window(unsigned int w, unsigned int h, std::string title);
-	int destroy_window(WINDOW &win);
+	WINDOW create_window(unsigned int w, unsigned int h, std::string title);
+	int destroy_window(WINDOW *win);
+	
+	void update_viewport_background(WindowManager::WINDOW *win);
     }
     
     class Engine: public Utils::Singleton<Engine>
