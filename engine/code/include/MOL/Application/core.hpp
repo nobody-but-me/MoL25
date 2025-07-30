@@ -29,12 +29,13 @@ namespace Core
 	void update_viewport_background(WindowManager::WINDOW *win);
     }
     
+    // Main engine class.
     class Engine: public Utils::Singleton<Engine>
     {
 	private:
 	    const std::string  DEFAULT_WINDOW_TITLE  = "MoL Game Engine";
-	    const unsigned int DEFAULT_WINDOW_HEIGHT = 600;
-	    const unsigned int DEFAULT_WINDOW_WIDTH  = 800;
+	    const unsigned int DEFAULT_WINDOW_HEIGHT =  600;
+	    const unsigned int DEFAULT_WINDOW_WIDTH  = 1064;
 	    WindowManager::WINDOW window;
 	    
 	    double previous_time = 0.0f;
