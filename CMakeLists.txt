@@ -5,13 +5,13 @@ project(MOL CXX C)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include_directories(
-	${CMAKE_SOURCE_DIR}/engine/src/include/
+	${CMAKE_SOURCE_DIR}/engine/code/include/
 	${CMAKE_SOURCE_DIR}/engine/libs/glm/
 	${CMAKE_SOURCE_DIR}/engine/libs/
 )
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
-	${CMAKE_SOURCE_DIR}/engine/src/include/MOL/*.cpp
-	${CMAKE_SOURCE_DIR}/engine/src/src/*.cpp
+	${CMAKE_SOURCE_DIR}/engine/code/include/MOL/*.cpp
+	${CMAKE_SOURCE_DIR}/engine/code/src/*.cpp
 )
 find_package(glm CONFIG REQUIRED)
 

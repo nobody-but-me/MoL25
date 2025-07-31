@@ -12,7 +12,7 @@
 #include <MOL/Application/core.hpp>
 #include <MOL/Gfx/renderer.hpp>
 
-#define SHADER_PATH "../../engine/src/shaders/"
+#define SHADER_PATH "../../engine/code/shaders/"
 
 namespace Core
 {
