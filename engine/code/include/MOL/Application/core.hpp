@@ -29,6 +29,12 @@ namespace Core
 	void update_viewport_background(WindowManager::WINDOW *win);
     }
     
+    namespace InputManager
+    {
+	// Extremely simple input handler.
+	bool is_key_pressed(GLFWwindow *win_buffer, int key);
+    }
+    
     // Main engine class.
     class Engine: public Utils::Singleton<Engine>
     {

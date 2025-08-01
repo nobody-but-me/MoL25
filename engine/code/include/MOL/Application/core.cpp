@@ -88,6 +88,17 @@ namespace Core
 	}
     }
     
+    namespace InputManager
+    {
+	bool is_key_pressed(GLFWwindow *win_buffer, int key) {
+	    int state = glfwGetKey(win_buffer, key);
+	    if (state == GLFW_PRESS) {
+		return true;
+	    }
+	    return false;
+	}
+    }
+    
     // --------------------------------------------------
     
     int Engine::init() {
@@ -115,6 +126,10 @@ namespace Core
 	    glfwPollEvents();
 	    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	    // Closing window with escape key.
+	    if (InputManager::is_key_pressed(window.buffer, GLFW_KEY_ESCAPE)) {
+		break;
+	    }
 	    
 	    // -- Updating viewport background colour.
 	    WindowManager::update_viewport_background(&window);

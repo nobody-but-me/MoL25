@@ -8,8 +8,7 @@ MoL is a 2D focused game engine being produced by me. It's written in C++ and it
 With that said, all the intention upon this game engine is, pure and essentially, recreational, except for its use in my portfolio/resume. 
 
 # Building
-
-WARNING: IT'LL CHANGE
+*WARNING: It is likely going to change in the future*
 
 Execute the code below and follow the instructions.
 
@@ -18,15 +17,18 @@ Execute the code below and follow the instructions.
 ```
 
 # TODO:
+*not ordered*
 
 - [x] Singleton Pattern;
 - [x] Simple renderer;
+- [x] Sprite rendering;
 - [x] Global coordinates;
-- [ ] Simple input handler;
+- [x] Simple input handler;
 - [ ] Camera movement manipulator;
 - [ ] 2D Lightning;
 - [ ] 2D physics simulation;
-- [ ] Game scripting;
-- [ ] Editor;
+- [ ] Simple Editor;
 - [ ] Simple 3D renderer;
+- [ ] Support to more image formats;
+- [ ] Game scripting;
 - [ ] 
