@@ -2,6 +2,7 @@
 #ifndef OBJECTS_H
 #define OBJECTS_H
 
+#include <molson.h>
 #include <string>
 
 #include <glm/mat4x4.hpp>
@@ -10,7 +11,10 @@
 typedef struct
 {
     
-    bool is_textured;
+    std::string texture_path = "";
+    Texture texture;
+    bool alpha;
+    
     bool initialized;
     std::string name;
     

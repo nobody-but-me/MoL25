@@ -3,9 +3,6 @@
 #define MOLSON_H
 #define molson(x) molson##x
 
-// #include <glm/mat4x4.hpp>
-// #include <glm/vec3.hpp>
-// #include <glm/vec2.hpp>
 #include <stdbool.h>
 
 // -- Texture and Shader types.
@@ -34,16 +31,16 @@ const char *molson(file_to_char)(const char *file_path);
 Texture molson(load_texture)(const char *file_path, bool alpha);
 
 int molson(init_shader)(const char *vertex_path, const char *fragment_path, Shader *shader);
-void molson(destroy)(Shader *shader);
+void molson(destroy_shader)(Shader *shader);
 void molson(use_shader)(Shader *shader);
 
-int molson(set_matrix4)(const char *name, void *value, bool use_shader, Shader *shader);
 int molson(set_vector2_f)(const char *name, float value[2], bool use_shader, Shader *shader);
 int molson(set_vector3_f)(const char *name, float value[3], bool use_shader, Shader *shader);
 int molson(set_vector4_f)(const char *name, float value[4], bool use_shader, Shader *shader);
+int molson(set_matrix4)(const char *name, void *value, bool use_shader, Shader *shader);
 
 void molson(set_float)(const char *name, float value, bool use_shader, Shader *shader);
-void molson(set_int)(const char *name, int value, bool use_shader, Shader *NNshader);
+void molson(set_int)(const char *name, int value, bool use_shader, Shader *shader);
 void molson(set_bool)(const char *name, bool value, Shader *shader);
 
 // --------------------------------------------------
@@ -62,7 +59,6 @@ void molson(set_bool)(const char *name, bool value, Shader *shader);
 #include <stdbool.h>
 #include <assert.h>
 #include <stdlib.h>
-#include <string.h>
 #include <errno.h>
 #include <stdio.h>
 
@@ -76,8 +72,6 @@ void molson(set_bool)(const char *name, bool value, Shader *shader);
 // TODO: Add glut support(although it's deprecated and old and you were not supposed to be using it.);
 #endif
 // --
-
-// #include <GLFW/glfw3.h>
 
 // -- Function destinated to load text files. Sometimes it's useful.
 const char *molson(file_to_char)(const char *file_path) {
@@ -154,14 +148,19 @@ static void generate_texture(unsigned int width, unsigned int height, unsigned c
 Texture molson(load_texture)(const char *file_path, bool alpha) {
     Texture new_texture;
     init_texture(&new_texture);
+    // Setting alpha format if alpha parameters is true
     if (alpha) {
 	new_texture.internal_format = GL_RGBA;
-	new_texture.image_format    = GL_RGBA;
+	new_texture.image_format = GL_RGBA;
     }
     int height, width, channels;
     
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(file_path, &width, &height, &channels, 0);
+    if (data == NULL) {
+	printf("[MOLSON]: FAILED :: Failed to load texture. \n");
+	return new_texture;
+    }
     generate_texture(width, height, data, &new_texture);
     stbi_image_free(data);
     
@@ -188,7 +187,7 @@ int molson(init_shader)(const char *vertex_path, const char *fragment_path, Shad
     char *vertex_buffer;
     FILE *fragment_code;
     FILE *vertex_code;
-
+    
     fragment_code = fopen(fragment_path, "r");
     if (fragment_code == NULL) {
 	fprintf(stderr, "[MOLSON]: FAILED :: Fragment shader file could not be loaded. \n");
@@ -304,7 +303,7 @@ BLANK:
     return 0;
 }
 
-void molson(destroy)(Shader *shader) {
+void molson(destroy_shader)(Shader *shader) {
     glDeleteShader(shader->fragment_shader);
     glDeleteShader(shader->vertex_shader);
     glDeleteProgram(shader->ID);

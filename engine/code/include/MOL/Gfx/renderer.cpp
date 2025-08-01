@@ -48,6 +48,30 @@ namespace Gfx
 	    return 0;
 	}
 	
+	int init_sprite_atom(Atom *sprite_object, std::string texture_path, bool alpha, std::string sprite_name) {
+	    sprite_object->name = sprite_name;
+	    float vertices[] = {
+		0.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+		
+		0.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 0.0f
+	    };
+	    glGenVertexArrays(1, &sprite_object->vao);
+	    glGenBuffers(1, &sprite_object->vbo);
+	    glBindBuffer(GL_ARRAY_BUFFER, sprite_object->vbo);
+	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	    sprite_object->indices = 6;
+	    
+	    sprite_object->alpha = alpha;
+	    if (texture_path != "") {
+		sprite_object->texture = molson(load_texture)(texture_path.c_str(), alpha);
+		sprite_object->texture_path = texture_path;
+	    }
+	    return check4opengl_errors();
+	}
 	int init_rect_atom(Atom *rect_object, std::string rect_name) {
 	    rect_object->name = rect_name;
 	    float vertices[] = {
@@ -97,17 +121,22 @@ namespace Gfx
 	    c[2] = object->colour[2] / 255;
 	    c[3] = object->colour[3] / 255;
 	    
-	    if (molson(set_matrix4)("transform", &trans, true, shader) != 0) {
-		std::cout << "[FAILED]: Object transform could not be set." << std::endl;
+	    if (molson(set_matrix4)("transform", &trans, false, shader) != 0) {
+		std::cerr << "[FAILED]: Object transform could not be set." << std::endl;
 		return 1;
 	    }
-	    if (molson(set_vector4_f)("colour", c, true, shader) != 0) {
-		std::cout << "[FAILED]: Object colour could not be set." << std::endl;
+	    if (molson(set_vector4_f)("colour", c, false, shader) != 0) {
+		std::cerr << "[FAILED]: Object colour could not be set." << std::endl;
 		return 1;
 	    }
+	    if (object->texture_path != "") molson(set_bool)("is_textured", true, shader);
 	    return 0;
 	}
 	void render_atom(Atom *object, Shader *shader) {
+	    if (object->texture_path != "") {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, object->texture.id);
+	    }
 	    molson(use_shader)(shader);
 	    glBindVertexArray(object->vao);
 	    glDrawArrays(GL_TRIANGLES, 0, object->indices);

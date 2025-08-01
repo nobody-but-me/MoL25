@@ -17,6 +17,7 @@ namespace Gfx
     namespace Renderer // TODO: Perhaps that's not the best approach. Perhaps a renderer class would be more correct.
     {
 	
+	int init_sprite_atom(Atom *sprite_object, std::string texture_path, bool alpha, std::string sprite_name);
 	int init_rect_atom(Atom *rect_object, std::string rect_name);
 	
 	int init_atom_vertexes(Atom *object, unsigned int vertex_amount);

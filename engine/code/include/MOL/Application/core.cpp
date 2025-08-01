@@ -13,6 +13,7 @@
 #include <MOL/Gfx/renderer.hpp>
 
 #define SHADER_PATH "../../engine/code/shaders/"
+#define ASSETS_PATH "../../engine/assets/"
 
 namespace Core
 {
@@ -141,7 +142,7 @@ namespace Core
     glm::mat4 projection = glm::mat4(1.0f);
     glm::mat4 view       = glm::mat4(1.0f);
     Shader object_default_shader;
-    Atom rect;
+    Atom sprite;
     // --------------------------------------------------
     void Engine::ready() {
 	std::cout << "[INFO]: Hello, MoL!" << std::endl;
@@ -160,29 +161,28 @@ namespace Core
 	    return;
 	}
 	// -- 
+	Gfx::Renderer::init_sprite_atom(&sprite, ASSETS_PATH"m.png", true, "Sprite");
+	Gfx::Renderer::init_atom_vertexes(&sprite, 4);
 	
-	Gfx::Renderer::init_rect_atom(&rect, "Rectangle");
-	Gfx::Renderer::init_atom_vertexes(&rect, 4);
-	
-	// 192, 223, 111
-	rect.colour = glm::vec4(192.0f, 223.0f, 111.0f, 255.0f);
-	rect.position = glm::vec3(0.0f, 0.0f, 0.0f);
-	rect.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	rect.scale = glm::vec2(4.0f, 4.0f);
+	// sprite.colour = glm::vec4(192.0f, 223.0f, 111.0f, 255.0f);
+	sprite.colour = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
+	sprite.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	sprite.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	sprite.scale = glm::vec2(5.0f, 5.0f);
 	return;
     }
     void Engine::loop(double delta_time) {
-	rect.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
+	sprite.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
 	return;
     }
     void Engine::render() {
-	Gfx::Renderer::set_atom_transform(&rect, &object_default_shader);
-	Gfx::Renderer::render_atom(&rect, &object_default_shader);
+	Gfx::Renderer::set_atom_transform(&sprite, &object_default_shader);
+	Gfx::Renderer::render_atom(&sprite, &object_default_shader);
 	return;
     }
     
     int Engine::destroy() {
-	molson(destroy)(&object_default_shader);
+	molson(destroy_shader)(&object_default_shader);
 	WindowManager::destroy_window(&window);
 	return 0;
     }
