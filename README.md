@@ -23,8 +23,8 @@ Execute the code below and follow the instructions.
 - [x] Simple renderer;
 - [x] Sprite rendering;
 - [x] Global coordinates;
-- [x] Simple input handler;
-- [ ] Camera movement manipulator;
+- [x] (Very) simple input handler;
+- [x] Camera movement manipulator;
 - [ ] 2D Lightning;
 - [ ] 2D physics simulation;
 - [ ] Simple Editor;

@@ -151,7 +151,7 @@ Texture molson(load_texture)(const char *file_path, bool alpha) {
     // Setting alpha format if alpha parameters is true
     if (alpha) {
 	new_texture.internal_format = GL_RGBA;
-	new_texture.image_format = GL_RGBA;
+	new_texture.image_format    = GL_RGBA;
     }
     int height, width, channels;
     

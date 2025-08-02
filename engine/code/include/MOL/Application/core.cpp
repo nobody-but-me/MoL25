@@ -9,6 +9,7 @@
 #include <glad.h>
 #include <GLFW/glfw3.h>
 
+#include <MOL/Application/camera.hpp>
 #include <MOL/Application/core.hpp>
 #include <MOL/Gfx/renderer.hpp>
 
@@ -100,106 +101,113 @@ namespace Core
     }
     
     // --------------------------------------------------
-    
-    int Engine::init() {
-	// GLFW initializing.
-	if (!glfwInit()) {
-	    std::cerr << "[FAILED]: OpenGL library could not be loaded. \n" << std::endl;
-	    glfwTerminate();
-	    return 1;
-	}
-	// Simple glfw configuration setting.
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    namespace Application {
 	
-	// -- Initializing main window.
-	window = WindowManager::create_window(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_TITLE);
-	if (window.buffer == nullptr) return 1;
-	
-	std::cout << "\n--------------------------------------------------\n" << std::endl;
-	std::cout << "[INFO]: Engine initialized succesfully." << std::endl;
-	ready();
-	// main application loop. Perhaps it would be better to put this logic in another place.
-	while (!glfwWindowShouldClose(window.buffer)) {
-	    glfwPollEvents();
-	    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	    // Closing window with escape key.
-	    if (InputManager::is_key_pressed(window.buffer, GLFW_KEY_ESCAPE)) {
-		break;
+	int Engine::init() {
+	    // GLFW initializing.
+	    if (!glfwInit()) {
+		std::cerr << "[FAILED]: OpenGL library could not be loaded. \n" << std::endl;
+		glfwTerminate();
+		return 1;
 	    }
+	    // Simple glfw configuration setting.
+	    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	    
-	    // -- Updating viewport background colour.
-	    WindowManager::update_viewport_background(&window);
+	    // -- Initializing main window.
+	    window = WindowManager::create_window(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_TITLE);
+	    if (window.buffer == nullptr) return 1;
 	    
-	    // TODO: possibility of the spiral of death.
-	    previous_time = current_time;
-	    current_time = glfwGetTime();
-	    double frame_time = current_time - previous_time;
-	    while (frame_time > 0.0f) {
-		float dt = std::min(frame_time, delta);
-		// --------------------------------------------------
-		loop(dt);
-		// --------------------------------------------------
-		frame_time -= dt;
-		updates += dt;
+	    std::cout << "\n--------------------------------------------------\n" << std::endl;
+	    std::cout << "[INFO]: Engine initialized succesfully." << std::endl;
+	    ready();
+	    // main application loop. Perhaps it would be better to put this logic in another place.
+	    while (!glfwWindowShouldClose(window.buffer)) {
+		glfwPollEvents();
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// TODO: Create an enum with custom names for Glfw key codes.
+		// Closing window with escape key.
+		if (InputManager::is_key_pressed(window.buffer, GLFW_KEY_ESCAPE)) {
+		    break;
+		}
+		
+		// -- Updating viewport background colour.
+		WindowManager::update_viewport_background(&window);
+		
+		// TODO: possibility of the spiral of death.
+		previous_time = current_time;
+		current_time = glfwGetTime();
+		double frame_time = current_time - previous_time;
+		while (frame_time > 0.0f) {
+		    float dt = std::min(frame_time, delta);
+		    // --------------------------------------------------
+		    loop(dt);
+		    // --------------------------------------------------
+		    frame_time -= dt;
+		    updates += dt;
+		}
+		render();
+		glfwSwapBuffers(window.buffer);
 	    }
-	    render();
-	    glfwSwapBuffers(window.buffer);
+	    destroy();
+	    return 0;
 	}
-	destroy();
-	return 0;
-    }
-    
-    // --------------------------------------------------
-    glm::mat4 projection = glm::mat4(1.0f);
-    glm::mat4 view       = glm::mat4(1.0f);
-    Shader object_default_shader;
-    Atom sprite;
-    // --------------------------------------------------
-    void Engine::ready() {
-	std::cout << "[INFO]: Hello, MoL!" << std::endl;
-	// -- TODO: re-place this logic.
-	molson(init_shader)(SHADER_PATH"object_default.vert", SHADER_PATH"object_default.frag", &object_default_shader);
 	
-	projection = glm::perspective(glm::radians(45.0f), (float)window.width / (float)window.height, 0.1f, 100.0f);
-	view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -50.0f));
-	
-	if (molson(set_matrix4)("projection", &projection, true, &object_default_shader) != 0) {
-	    std::cerr << "[FAILED]: Projection failed." << std::endl;
+	// --------------------------------------------------
+	Shader object_default_shader;
+	Atom sprite;
+	// --------------------------------------------------
+	void Engine::ready() {
+	    std::cout << "[INFO]: Hello, MoL!" << std::endl;
+	    // -- TODO: re-place this whole logic to a better place.
+	    projection = glm::mat4(1.0f);
+	    view       = glm::mat4(1.0f);
+	    
+	    molson(init_shader)(SHADER_PATH"object_default.vert", SHADER_PATH"object_default.frag", &object_default_shader);
+	    
+	    projection = glm::perspective(glm::radians(45.0f), (float)window.width / (float)window.height, 0.1f, 100.0f);
+	    view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -50.0f));
+	    
+	    if (molson(set_matrix4)("projection", &projection, true, &object_default_shader) != 0) {
+		std::cerr << "[FAILED]: Projection failed." << std::endl;
+		return;
+	    }
+	    if (molson(set_matrix4)("view", &view, true, &object_default_shader) != 0) {
+		std::cerr << "[FAILED]: Projection failed." << std::endl;
+		return;
+	    }
+	    // -- 
+	    Gfx::Renderer::init_sprite_atom(&sprite, ASSETS_PATH"m.png", true, "Sprite");
+	    Gfx::Renderer::init_atom_vertexes(&sprite, 4);
+	    
+	    // sprite.colour = glm::vec4(192.0f, 223.0f, 111.0f, 255.0f);
+	    sprite.colour = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
+	    sprite.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	    sprite.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	    sprite.scale = glm::vec2(5.0f, 5.0f);
 	    return;
 	}
-	if (molson(set_matrix4)("view", &view, true, &object_default_shader) != 0) {
-	    std::cerr << "[FAILED]: Projection failed." << std::endl;
+	void Engine::loop(double delta_time) {
+	    sprite.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
+	    
+	    // Very simple camera movement.
+	    Core::Camera::move(window.buffer, view, &object_default_shader);
 	    return;
 	}
-	// -- 
-	Gfx::Renderer::init_sprite_atom(&sprite, ASSETS_PATH"m.png", true, "Sprite");
-	Gfx::Renderer::init_atom_vertexes(&sprite, 4);
+	void Engine::render() {
+	    Gfx::Renderer::set_atom_transform(&sprite, &object_default_shader);
+	    Gfx::Renderer::render_atom(&sprite, &object_default_shader);
+	    return;
+	}
 	
-	// sprite.colour = glm::vec4(192.0f, 223.0f, 111.0f, 255.0f);
-	sprite.colour = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
-	sprite.position = glm::vec3(0.0f, 0.0f, 0.0f);
-	sprite.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	sprite.scale = glm::vec2(5.0f, 5.0f);
-	return;
-    }
-    void Engine::loop(double delta_time) {
-	sprite.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
-	return;
-    }
-    void Engine::render() {
-	Gfx::Renderer::set_atom_transform(&sprite, &object_default_shader);
-	Gfx::Renderer::render_atom(&sprite, &object_default_shader);
-	return;
-    }
-    
-    int Engine::destroy() {
-	molson(destroy_shader)(&object_default_shader);
-	WindowManager::destroy_window(&window);
-	return 0;
+	int Engine::destroy() {
+	    molson(destroy_shader)(&object_default_shader);
+	    WindowManager::destroy_window(&window);
+	    return 0;
+	}
     }
 }
 
