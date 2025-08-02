@@ -24,8 +24,10 @@ Execute the code below and follow the instructions.
 - [x] Global coordinates;
 - [x] (Very) simple input handler;
 - [x] (Extremely simple) camera movement manipulator;
-- [ ] 
+- [ ] Resource/Object Manager;
 - [ ] 2D square collision detection;
 - [ ] 2D circle collision detection;
 - [ ] 2D Lightning;
+- [ ] GUI implementation;
+- [ ] Text rendering;
 - [ ] 
