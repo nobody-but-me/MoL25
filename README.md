@@ -1,6 +1,5 @@
 
 # MoL Game Engine: an atomic game engine.
-
 *I don't even know how many times I have started and rewrote this engine, but here we are, once again*.
 
 MoL is a 2D focused game engine being produced by me. It's written in C++ and its renderer uses OpenGL. Its main goal is to be a modular yet simple to learn game engine, as well as to be my toy game engine -- which means that I have no plans to ever finish it, at all.
@@ -24,11 +23,9 @@ Execute the code below and follow the instructions.
 - [x] Sprite rendering;
 - [x] Global coordinates;
 - [x] (Very) simple input handler;
-- [x] Camera movement manipulator;
+- [x] (Extremely simple) camera movement manipulator;
+- [ ] 
+- [ ] 2D square collision detection;
+- [ ] 2D circle collision detection;
 - [ ] 2D Lightning;
-- [ ] 2D physics simulation;
-- [ ] Simple Editor;
-- [ ] Simple 3D renderer;
-- [ ] Support to more image formats;
-- [ ] Game scripting;
 - [ ] 
