@@ -11,6 +11,51 @@
 
 #include <MOL/Utils/singleton.hpp>
 
+enum KEYCODES {
+    
+    MOL_A = GLFW_KEY_A,
+    MOL_B = GLFW_KEY_B,
+    MOL_C = GLFW_KEY_C,
+    MOL_D = GLFW_KEY_D,
+    MOL_E = GLFW_KEY_E,
+    MOL_F = GLFW_KEY_F,
+    MOL_G = GLFW_KEY_G,
+    MOL_H = GLFW_KEY_H,
+    MOL_I = GLFW_KEY_I,
+    MOL_J = GLFW_KEY_J,
+    MOL_K = GLFW_KEY_K,
+    MOL_L = GLFW_KEY_L,
+    MOL_M = GLFW_KEY_M,
+    MOL_N = GLFW_KEY_N,
+    MOL_O = GLFW_KEY_O,
+    MOL_P = GLFW_KEY_P,
+    MOL_Q = GLFW_KEY_Q,
+    MOL_R = GLFW_KEY_R,
+    MOL_S = GLFW_KEY_S,
+    MOL_T = GLFW_KEY_T,
+    MOL_U = GLFW_KEY_U,
+    MOL_V = GLFW_KEY_V,
+    MOL_W = GLFW_KEY_W,
+    MOL_X = GLFW_KEY_X,
+    MOL_Y = GLFW_KEY_Y,
+    MOL_Z = GLFW_KEY_Z,
+    
+    MOL_RCONTROL = GLFW_KEY_RIGHT_CONTROL,
+    MOL_LCONTROL = GLFW_KEY_LEFT_CONTROL,
+    MOL_RSHIFT   = GLFW_KEY_RIGHT_SHIFT,
+    MOL_LSHIFT   = GLFW_KEY_LEFT_SHIFT,
+    
+    MOL_SPACE  = GLFW_KEY_SPACE,
+    MOL_ENTER  = GLFW_KEY_ENTER,
+    MOL_ESC = GLFW_KEY_ESCAPE,
+    
+    MOL_RIGHT = GLFW_KEY_RIGHT,
+    MOL_LEFT  = GLFW_KEY_LEFT,
+    MOL_DOWN  = GLFW_KEY_DOWN,
+    MOL_UP    = GLFW_KEY_UP
+    
+};
+
 namespace Core
 {
     

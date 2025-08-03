@@ -128,9 +128,8 @@ namespace Core
 		glfwPollEvents();
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// TODO: Create an enum with custom names for Glfw key codes.
 		// Closing window with escape key.
-		if (InputManager::is_key_pressed(window.buffer, GLFW_KEY_ESCAPE)) {
+		if (InputManager::is_key_pressed(window.buffer, MOL_ESC)) {
 		    break;
 		}
 		

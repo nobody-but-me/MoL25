@@ -27,18 +27,18 @@ namespace Core
 	}
 	// Pretty simple implementation of camera position manipulator;
 	void move(GLFWwindow *w, glm::mat4 view, Shader *shader) {
-	    if (!Core::InputManager::is_key_pressed(w, GLFW_KEY_LEFT_SHIFT)) {
+	    if (!Core::InputManager::is_key_pressed(w, MOL_LSHIFT)) {
 		// -- TODO: Hard-coded.
 		// General movement: up, down, left right.
-		if (Core::InputManager::is_key_pressed(w, GLFW_KEY_W))      { position.y += 0.2f * position.z/50.0f; update(view, shader); }
-		else if (Core::InputManager::is_key_pressed(w, GLFW_KEY_S)) { position.y -= 0.2f * position.z/50.0f; update(view, shader); }
-		if (Core::InputManager::is_key_pressed(w, GLFW_KEY_A))      { position.x -= 0.2f * position.z/50.0f; update(view, shader); }
-		else if (Core::InputManager::is_key_pressed(w, GLFW_KEY_D)) { position.x += 0.2f * position.z/50.0f; update(view, shader); }
+		if (Core::InputManager::is_key_pressed(w, MOL_W))      { position.y += 0.2f * position.z/50.0f; update(view, shader); }
+		else if (Core::InputManager::is_key_pressed(w, MOL_S)) { position.y -= 0.2f * position.z/50.0f; update(view, shader); }
+		if (Core::InputManager::is_key_pressed(w, MOL_A))      { position.x -= 0.2f * position.z/50.0f; update(view, shader); }
+		else if (Core::InputManager::is_key_pressed(w, MOL_D)) { position.x += 0.2f * position.z/50.0f; update(view, shader); }
 		// --
 	    } else {
 	    // Z movement: foward and backward.
-		if (Core::InputManager::is_key_pressed(w, GLFW_KEY_W))      { position.z -= 0.3f; update(view, shader); }
-		if (Core::InputManager::is_key_pressed(w, GLFW_KEY_S))      { position.z += 0.3f; update(view, shader); }
+		if (Core::InputManager::is_key_pressed(w, MOL_W))      { position.z -= 0.3f; update(view, shader); }
+		if (Core::InputManager::is_key_pressed(w, MOL_S))      { position.z += 0.3f; update(view, shader); }
 	    }
 	}
     }
