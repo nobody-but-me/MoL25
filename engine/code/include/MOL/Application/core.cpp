@@ -34,7 +34,7 @@ namespace Core
 	static void window_buffer_size_callback(GLFWwindow *win, int w, int h) {
 	    glfwGetFramebufferSize(win, &w, &h);
 	    // TODO: hard-coded.
-	    glViewport(w / 2 - (800 / 2), h / 2 - (600 / 2), 800, 600);
+	    glViewport(w / 2 - (640 / 2), h / 2 - (480 / 2), 640, 480);
 	    return;
 	}
 	WindowManager::WINDOW create_window(unsigned int w, unsigned int h, std::string title) {
@@ -168,30 +168,37 @@ namespace Core
 	    
 	    molson(init_shader)(SHADER_PATH"object_default.vert", SHADER_PATH"object_default.frag", &object_default_shader);
 	    
-	    projection = glm::perspective(glm::radians(45.0f), (float)window.width / (float)window.height, 0.1f, 100.0f);
+	    projection = glm::perspective(glm::radians(45.0f), (float)window.width / (float)window.height, 0.1f, 350.0f);
 	    view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -50.0f));
 	    
 	    if (molson(set_matrix4)("projection", &projection, true, &object_default_shader) != 0) {
-		std::cerr << "[FAILED]: Projection failed." << std::endl;
+		std::cerr << "[FAILED]: Perspective projection setting failed." << std::endl;
 		return;
 	    }
 	    if (molson(set_matrix4)("view", &view, true, &object_default_shader) != 0) {
-		std::cerr << "[FAILED]: Projection failed." << std::endl;
+		std::cerr << "[FAILED]: View projection setting failed." << std::endl;
 		return;
 	    }
 	    // -- 
-	    Gfx::Renderer::init_sprite_atom(&sprite, ASSETS_PATH"m.png", true, "Sprite");
-	    Gfx::Renderer::init_atom_vertexes(&sprite, 4);
 	    
-	    // sprite.colour = glm::vec4(192.0f, 223.0f, 111.0f, 255.0f);
+	    Gfx::Renderer::init_sprite_atom(&sprite, ASSETS_PATH"m.png", true, "Sprite");
+	    
+	    int vertex_num = 4;
+	    Gfx::Renderer::init_atom_vertexes(&sprite, vertex_num);
+	    
 	    sprite.colour = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
 	    sprite.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	    sprite.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 	    sprite.scale = glm::vec2(5.0f, 5.0f);
 	    return;
 	}
+	// -- just for fun
+	static float colour_buffer(float frequency) { // no idea for a better name
+	    return std::sin((float)glfwGetTime() * frequency) * 255.0f;
+	}
 	void Engine::loop(double delta_time) {
 	    sprite.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
+	    sprite.colour = glm::vec4(colour_buffer(5.0f), colour_buffer(4.0f), colour_buffer(6.0f), 255.0f);
 	    
 	    // Very simple camera movement.
 	    Core::Camera::move(window.buffer, view, &object_default_shader);

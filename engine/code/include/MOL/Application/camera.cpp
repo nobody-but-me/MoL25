@@ -37,8 +37,8 @@ namespace Core
 		// --
 	    } else {
 	    // Z movement: foward and backward.
-		if (Core::InputManager::is_key_pressed(w, GLFW_KEY_W))      { position.z -= 0.5f; update(view, shader); }
-		if (Core::InputManager::is_key_pressed(w, GLFW_KEY_S))      { position.z += 0.5f; update(view, shader); }
+		if (Core::InputManager::is_key_pressed(w, GLFW_KEY_W))      { position.z -= 0.3f; update(view, shader); }
+		if (Core::InputManager::is_key_pressed(w, GLFW_KEY_S))      { position.z += 0.3f; update(view, shader); }
 	    }
 	}
     }
