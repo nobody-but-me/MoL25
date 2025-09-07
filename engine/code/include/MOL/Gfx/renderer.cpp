@@ -48,8 +48,71 @@ namespace Gfx
 	    return 0;
 	}
 	
-	int init_sprite_atom(Atom *sprite_object, std::string texture_path, bool alpha, std::string sprite_name) {
-	    sprite_object->name = sprite_name;
+	int init_cube_atom(Atom *cube_object, std::string texture_path, bool alpha, std::string name) {
+	    cube_object->name = name;
+	    float vertices[] = {
+		
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+		
+	    };
+	    glGenVertexArrays(1, &cube_object->vao);
+	    glGenBuffers(1, &cube_object->vbo);
+	    glBindVertexArray(cube_object->vao);
+	    
+	    glBindBuffer(GL_ARRAY_BUFFER, cube_object->vbo);
+	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	    cube_object->indices = 36;
+	    
+	    cube_object->alpha = alpha;
+	    if (texture_path != "") {
+		cube_object->texture = molson(load_texture)(texture_path.c_str(), alpha);
+		cube_object->texture_path = texture_path;
+	    }
+	    return check4opengl_errors();
+	}
+	
+	int init_sprite_atom(Atom *sprite_object, std::string texture_path, bool alpha, std::string name) {
+	    sprite_object->name = name;
 	    float vertices[] = {
 		0.0f, 1.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 1.0f, 0.0f,
@@ -61,6 +124,8 @@ namespace Gfx
 	    };
 	    glGenVertexArrays(1, &sprite_object->vao);
 	    glGenBuffers(1, &sprite_object->vbo);
+	    glBindVertexArray(sprite_object->vao);
+	    
 	    glBindBuffer(GL_ARRAY_BUFFER, sprite_object->vbo);
 	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	    sprite_object->indices = 6;
@@ -72,8 +137,8 @@ namespace Gfx
 	    }
 	    return check4opengl_errors();
 	}
-	int init_rect_atom(Atom *rect_object, std::string rect_name) {
-	    rect_object->name = rect_name;
+	int init_rect_atom(Atom *rect_object, std::string name) {
+	    rect_object->name = name;
 	    float vertices[] = {
 		0.0f, 1.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 1.0f, 0.0f,
@@ -85,6 +150,8 @@ namespace Gfx
 	    };
 	    glGenVertexArrays(1, &rect_object->vao);
 	    glGenBuffers(1, &rect_object->vbo);
+	    glBindVertexArray(rect_object->vao);
+	    
 	    glBindBuffer(GL_ARRAY_BUFFER, rect_object->vbo);
 	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	    rect_object->indices = 6;
@@ -92,10 +159,29 @@ namespace Gfx
 	    return check4opengl_errors();
 	}
 	
-	int init_atom_vertexes(Atom *object, unsigned int vertex_amount) {
-	    glBindVertexArray(object->vao);
-	    glVertexAttribPointer(0, vertex_amount, GL_FLOAT, GL_FALSE, vertex_amount * sizeof(float), (void *)0);
+	int init_atom_vertexes(Atom *object, Shader *shader) {
+	    if (molson(set_bool)("threed_object", false, shader) != 0) {
+		std::cerr << "[FAILED]: Two-dimensional uniform variable setting has failed." << std::endl;
+		return -1;
+	    }
+	    // glVertexAttribPointer(0, vertex_amount, GL_FLOAT, GL_FALSE, vertex_amount * sizeof(float), (void *)0);
+	    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0); // NOTE: check vertex amount later.
 	    glEnableVertexAttribArray(0);
+	    
+	    glBindBuffer(GL_ARRAY_BUFFER, 0);
+	    glBindVertexArray(0);
+	    
+	    return check4opengl_errors();
+	}
+	int init_3d_atom_vertexes(Atom *object, Shader *shader) {
+	    if (molson(set_bool)("threed_object", true, shader) != 0) {
+		std::cerr << "[FAILED]: Three-dimensional uniform variable setting has failed." << std::endl;
+		return -1;
+	    }
+	    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	    glEnableVertexAttribArray(0);
+	    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	    glEnableVertexAttribArray(1);
 	    
 	    glBindBuffer(GL_ARRAY_BUFFER, 0);
 	    glBindVertexArray(0);
@@ -113,7 +199,7 @@ namespace Gfx
 	    trans = glm::rotate(trans, glm::radians(object->rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f));
 	    trans = glm::translate(trans, glm::vec3(-0.5f * object->scale[0], -0.5f * object->scale[1], 0.0f));
 	    
-	    trans = glm::scale(trans, glm::vec3(object->scale, 1.0f));
+	    trans = glm::scale(trans, glm::vec3(object->scale));
 	    
 	    float c[4];
 	    c[0] = object->colour[0] / 255;

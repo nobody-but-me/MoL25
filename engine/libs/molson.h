@@ -39,9 +39,9 @@ int molson(set_vector3_f)(const char *name, float value[3], bool use_shader, Sha
 int molson(set_vector4_f)(const char *name, float value[4], bool use_shader, Shader *shader);
 int molson(set_matrix4)(const char *name, void *value, bool use_shader, Shader *shader);
 
-void molson(set_float)(const char *name, float value, bool use_shader, Shader *shader);
-void molson(set_int)(const char *name, int value, bool use_shader, Shader *shader);
-void molson(set_bool)(const char *name, bool value, Shader *shader);
+int molson(set_float)(const char *name, float value, bool use_shader, Shader *shader);
+int molson(set_int)(const char *name, int value, bool use_shader, Shader *shader);
+int molson(set_bool)(const char *name, bool value, Shader *shader);
 
 // --------------------------------------------------
 // -               IMPLEMENTATION                   -
@@ -356,23 +356,26 @@ int molson(set_vector4_f)(const char *name, float value[4], bool use_shader, Sha
     return 0;
 }
 
-void molson(set_float)(const char *name, float value, bool use_shader, Shader *shader) {
+int molson(set_float)(const char *name, float value, bool use_shader, Shader *shader) {
+    if (value == NULL) return -1;
     if (use_shader) {
 	glUseProgram(shader->ID);
     }
     glUniform1f(glGetUniformLocation(shader->ID, name), value);
-    return;
+    return 0;
 }
-void molson(set_int)(const char *name, int value, bool use_shader, Shader *shader) {
+int molson(set_int)(const char *name, int value, bool use_shader, Shader *shader) {
+    if (value == NULL) return -1;
     if (use_shader) {
 	glUseProgram(shader->ID);
     }
     glUniform1i(glGetUniformLocation(shader->ID, name), value);
-    return;
+    return 0;
 }
-void molson(set_bool)(const char *name, bool value, Shader *shader) {
+int molson(set_bool)(const char *name, bool value, Shader *shader) {
+    if (value == NULL) return -1;
     glUniform1i(glGetUniformLocation(shader->ID, name), value);
-    return;
+    return 0;
 }
 // --
 

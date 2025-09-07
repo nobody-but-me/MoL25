@@ -15,6 +15,10 @@ Execute the code below and follow the instructions.
 > chmod +x ./build.sh && ./build.sh
 ```
 
+# Dependencies
+
+ - GLFW;
+
 # TODO:
 *not ordered*
 
@@ -22,13 +26,13 @@ Execute the code below and follow the instructions.
 - [x] Simple renderer;
 - [x] Sprite rendering;
 - [x] Global coordinates;
-- [x] (Very) simple input handler;
-- [x] (Extremely simple) camera movement manipulator;
+- [x] Very simple input handler;
+- [x] Very simple camera movement manipulator;
 - [ ] Simple Resource/Object Manager;
 - [ ] 2D square collision detection;
 - [ ] 2D circle collision detection;
-- [ ] 2D Lightning;
-- [ ] Animation manager;
+- [ ] Simple 2D Lightning;
 - [ ] GUI implementation;
+- [ ] Animation manager;
 - [ ] Text rendering;
 - [ ] 

@@ -57,7 +57,7 @@ namespace Core
 	    // Initializing glad.
 	    int glad_version = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	    if (!glad_version) {
-		std::cerr << "[FAILED]: Could not initialize OpenGL context. Engine is not glad." << std::endl;
+		std::cerr << "[FAILED]: Could not initialize OpenGL context. The engine is, for sure, not glad." << std::endl;
 		window.buffer = nullptr;
 		return window;
 	    }
@@ -157,7 +157,7 @@ namespace Core
 	
 	// --------------------------------------------------
 	Shader object_default_shader;
-	Atom sprite;
+	Atom cube;
 	// --------------------------------------------------
 	void Engine::ready() {
 	    std::cout << "[INFO]: Hello, MoL!" << std::endl;
@@ -180,15 +180,14 @@ namespace Core
 	    }
 	    // -- 
 	    
-	    Gfx::Renderer::init_sprite_atom(&sprite, ASSETS_PATH"m.png", true, "Sprite");
+	    // int vertex_num = 3;
+	    Gfx::Renderer::init_cube_atom(&cube, ASSETS_PATH"m.png", true, "Cube");
+	    Gfx::Renderer::init_3d_atom_vertexes(&cube, &object_default_shader);
 	    
-	    int vertex_num = 4;
-	    Gfx::Renderer::init_atom_vertexes(&sprite, vertex_num);
-	    
-	    sprite.colour = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
-	    sprite.position = glm::vec3(0.0f, 0.0f, 0.0f);
-	    sprite.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	    sprite.scale = glm::vec2(5.0f, 5.0f);
+	    cube.colour   = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
+	    cube.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	    cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	    cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
 	    return;
 	}
 	// -- just for fun
@@ -196,16 +195,16 @@ namespace Core
 	    return std::sin((float)glfwGetTime() * frequency) * 255.0f;
 	}
 	void Engine::loop(double delta_time) {
-	    sprite.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
-	    sprite.colour = glm::vec4(colour_buffer(5.0f), colour_buffer(4.0f), colour_buffer(6.0f), 255.0f);
+	    cube.colour = glm::vec4(colour_buffer(5.0f), colour_buffer(4.0f), colour_buffer(6.0f), 255.0f);
+	    cube.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
 	    
 	    // Very simple camera movement.
 	    Core::Camera::move(window.buffer, view, &object_default_shader);
 	    return;
 	}
 	void Engine::render() {
-	    Gfx::Renderer::set_atom_transform(&sprite, &object_default_shader);
-	    Gfx::Renderer::render_atom(&sprite, &object_default_shader);
+	    Gfx::Renderer::set_atom_transform(&cube, &object_default_shader);
+	    Gfx::Renderer::render_atom(&cube, &object_default_shader);
 	    return;
 	}
 	

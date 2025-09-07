@@ -26,7 +26,7 @@ typedef struct
     glm::mat4 transform;
     glm::vec3 position;
     glm::vec3 rotation;
-    glm::vec2 scale;
+    glm::vec3 scale;
     
     glm::vec4 colour;
 } Atom;
