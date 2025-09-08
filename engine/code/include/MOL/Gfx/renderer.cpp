@@ -96,8 +96,8 @@ namespace Gfx
 		
 	    };
 	    glGenVertexArrays(1, &cube_object->vao);
-	    glGenBuffers(1, &cube_object->vbo);
 	    glBindVertexArray(cube_object->vao);
+	    glGenBuffers(1, &cube_object->vbo);
 	    
 	    glBindBuffer(GL_ARRAY_BUFFER, cube_object->vbo);
 	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -110,6 +110,65 @@ namespace Gfx
 	    }
 	    return check4opengl_errors();
 	}
+	int init_light_atom(Atom *light_object, std::string name) {
+	    light_object->name = name;
+	    float vertices[] = {
+		
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+		
+	    };
+	    glGenVertexArrays(1, &light_object->light_vao);
+	    glBindVertexArray(light_object->light_vao);
+	    glGenBuffers(1, &light_object->vbo);
+	    
+	    glBindBuffer(GL_ARRAY_BUFFER, light_object->vbo);
+	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	    light_object->indices = 36;
+	    
+	    return check4opengl_errors();
+	}
+	
+	// --------------------------------------------------
 	
 	int init_sprite_atom(Atom *sprite_object, std::string texture_path, bool alpha, std::string name) {
 	    sprite_object->name = name;
@@ -123,8 +182,8 @@ namespace Gfx
 		1.0f, 0.0f, 1.0f, 1.0f, 0.0f
 	    };
 	    glGenVertexArrays(1, &sprite_object->vao);
-	    glGenBuffers(1, &sprite_object->vbo);
 	    glBindVertexArray(sprite_object->vao);
+	    glGenBuffers(1, &sprite_object->vbo);
 	    
 	    glBindBuffer(GL_ARRAY_BUFFER, sprite_object->vbo);
 	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -149,8 +208,8 @@ namespace Gfx
 		1.0f, 0.0f, 1.0f, 1.0f, 0.0f
 	    };
 	    glGenVertexArrays(1, &rect_object->vao);
-	    glGenBuffers(1, &rect_object->vbo);
 	    glBindVertexArray(rect_object->vao);
+	    glGenBuffers(1, &rect_object->vbo);
 	    
 	    glBindBuffer(GL_ARRAY_BUFFER, rect_object->vbo);
 	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -201,11 +260,17 @@ namespace Gfx
 	}
 	void render_atom(Atom *object, Shader *shader) {
 	    molson(use_shader)(shader);
+	    
 	    if (object->texture_path != "") {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, object->texture.id);
+		molson(set_bool)("is_textured", true, shader);
+	    } else {
+		molson(set_bool)("is_textured", false, shader);
 	    }
-	    glBindVertexArray(object->vao);
+	    
+	    if (object->light_vao == NULL) glBindVertexArray(object->vao);
+	    else glBindVertexArray(object->light_vao);
 	    glDrawArrays(GL_TRIANGLES, 0, object->indices);
 	    glBindVertexArray(0);
 	    return;

@@ -19,6 +19,7 @@ namespace Gfx
 	
 	// -- 3d-ish atoms;
 	int init_cube_atom(Atom *cube_object, std::string texture_path, bool alpha, std::string name);
+	int init_light_atom(Atom *light_object, std::string name);
 	// --
 	// -- 2d-ish atoms;
 	int init_sprite_atom(Atom *sprite_object, std::string texture_path, bool alpha, std::string name);

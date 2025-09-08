@@ -157,7 +157,7 @@ namespace Core
 	
 	// --------------------------------------------------
 	Shader object_default_shader;
-	Atom sprite, cube;
+	Atom sprite, cube, light;
 	// --------------------------------------------------
 	void Engine::ready() {
 	    std::cout << "[INFO]: Hello, MoL!" << std::endl;
@@ -186,6 +186,9 @@ namespace Core
 	    Gfx::Renderer::init_cube_atom(&cube, ASSETS_PATH"m.png", true, "Cube");
 	    Gfx::Renderer::init_atom_vertexes(&cube, &object_default_shader);
 	    
+	    Gfx::Renderer::init_light_atom(&light, "Light");
+	    Gfx::Renderer::init_atom_vertexes(&light, &object_default_shader);
+	    
 	    sprite.colour   = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
 	    sprite.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	    sprite.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -195,6 +198,11 @@ namespace Core
 	    cube.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	    cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 	    cube.scale    = glm::vec3(8.0f, 8.0f, 8.0f);
+	    
+	    light.colour   = glm::vec4(200.0f, 200.0f, 200.0f, 255.0f);
+	    light.position = glm::vec3(10.0f, 10.0f, -10.0f);
+	    light.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	    light.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
 	    return;
 	}
 	
@@ -212,6 +220,9 @@ namespace Core
 	    
 	    Gfx::Renderer::set_atom_transform(&cube, &object_default_shader);
 	    Gfx::Renderer::render_atom(&cube, &object_default_shader);
+	    
+	    Gfx::Renderer::set_atom_transform(&light, &object_default_shader);
+	    Gfx::Renderer::render_atom(&light, &object_default_shader);
 	    return;
 	}
 	

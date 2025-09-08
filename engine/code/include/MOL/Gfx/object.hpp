@@ -18,6 +18,7 @@ typedef struct
     bool initialized;
     std::string name;
     
+    unsigned int light_vao;
     unsigned int indices;
     unsigned int vbo;
     unsigned int vao;
