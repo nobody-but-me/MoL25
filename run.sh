@@ -1,8 +1,9 @@
 
 #!/usr/bin/env bash
 
-if [ "$(type -t ./build/bin/mol)" = "file" ]; then
-    echo -e "\n[INFO]: RUNNING..."
+# if [ "$(type -t ./build/bin/mol)" = "file" ]; then
+if [ -f ./build/bin/mol ]; then
+    echo "\n[INFO]: RUNNING..."
     
     cd ./build/bin/
     
@@ -10,5 +11,5 @@ if [ "$(type -t ./build/bin/mol)" = "file" ]; then
     
     cd ..
 else
-    echo -e "[ERROR]: COULD NOT RUN ENGINE: EXECUTABLE DOES NOT EXIST OR HAS SOME ERROR. \n"
+    echo "[ERROR]: COULD NOT RUN ENGINE: EXECUTABLE DOES NOT EXIST OR HAS SOME ERROR. \n"
 fi

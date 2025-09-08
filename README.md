@@ -9,10 +9,11 @@ With that said, all the intention upon this game engine is, pure and essentially
 # Building
 *WARNING: It is likely going to change in the future*
 
-Execute the code below and follow the instructions.
+Execute the commands below and follow the instructions.
 
 ```bash
-> chmod +x ./build.sh && ./build.sh
+ > chmod +x ./build.sh 
+ > sh ./build.sh
 ```
 
 # Dependencies
