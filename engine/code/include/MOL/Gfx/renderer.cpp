@@ -158,10 +158,7 @@ namespace Gfx
 	    
 	    return check4opengl_errors();
 	}
-	
 	int init_atom_vertexes(Atom *object, Shader *shader) {
-	    // glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
-	    // glEnableVertexAttribArray(0);
 	    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	    glEnableVertexAttribArray(0);
 	    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -172,18 +169,6 @@ namespace Gfx
 	    
 	    return check4opengl_errors();
 	}
-	// int init_3d_atom_vertexes(Atom *object, Shader *shader) {
-	//     molson(set_bool)("threed_object", true, shader);
-	//     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	//     glEnableVertexAttribArray(0);
-	//     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	//     glEnableVertexAttribArray(1);
-	    
-	//     glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//     glBindVertexArray(0);
-	    
-	//     return check4opengl_errors();
-	// }
 	int set_atom_transform(Atom *object, Shader *shader) {
 	    molson(use_shader)(shader);
 	    glm::mat4 trans = glm::mat4(1.0f);

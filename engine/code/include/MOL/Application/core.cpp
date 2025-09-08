@@ -136,7 +136,7 @@ namespace Core
 		// -- Updating viewport background colour.
 		WindowManager::update_viewport_background(&window);
 		
-		// TODO: possibility of the spiral of death.
+		// TODO: fix possibility of the spiral of death.
 		previous_time = current_time;
 		current_time = glfwGetTime();
 		double frame_time = current_time - previous_time;
