@@ -180,7 +180,7 @@ namespace Core
 	    }
 	    // -- 
 	    
-	    Gfx::Renderer::init_sprite_atom(&sprite, ASSETS_PATH"m.png", true, "Sprite");
+	    Gfx::Renderer::init_sprite_atom(&sprite, ASSETS_PATH"m2.png", true, "Sprite");
 	    Gfx::Renderer::init_atom_vertexes(&sprite, &object_default_shader);
 	    
 	    Gfx::Renderer::init_cube_atom(&cube, ASSETS_PATH"m.png", true, "Cube");
@@ -198,14 +198,7 @@ namespace Core
 	    return;
 	}
 	
-	// -- just for fun
-	static float colour_buffer(float frequency) { // no idea for a better name
-	    return std::sin((float)glfwGetTime() * frequency) * 255.0f;
-	}
-	// --
 	void Engine::loop(double delta_time) {
-	    cube.colour = glm::vec4(colour_buffer(5.0f), colour_buffer(4.0f), colour_buffer(6.0f), 255.0f);
-	    
 	    cube.rotation = glm::vec3((float)glfwGetTime() * 50, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
 	    sprite.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, 0.0f);
 	    
