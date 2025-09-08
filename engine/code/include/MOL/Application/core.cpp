@@ -157,7 +157,7 @@ namespace Core
 	
 	// --------------------------------------------------
 	Shader object_default_shader;
-	Atom cube;
+	Atom sprite, cube;
 	// --------------------------------------------------
 	void Engine::ready() {
 	    std::cout << "[INFO]: Hello, MoL!" << std::endl;
@@ -180,29 +180,43 @@ namespace Core
 	    }
 	    // -- 
 	    
-	    // int vertex_num = 3;
+	    Gfx::Renderer::init_sprite_atom(&sprite, ASSETS_PATH"m.png", true, "Sprite");
+	    Gfx::Renderer::init_atom_vertexes(&sprite, &object_default_shader);
+	    
 	    Gfx::Renderer::init_cube_atom(&cube, ASSETS_PATH"m.png", true, "Cube");
-	    Gfx::Renderer::init_3d_atom_vertexes(&cube, &object_default_shader);
+	    Gfx::Renderer::init_atom_vertexes(&cube, &object_default_shader);
+	    
+	    sprite.colour   = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
+	    sprite.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	    sprite.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	    sprite.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
 	    
 	    cube.colour   = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
 	    cube.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	    cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	    cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
+	    cube.scale    = glm::vec3(8.0f, 8.0f, 8.0f);
 	    return;
 	}
+	
 	// -- just for fun
 	static float colour_buffer(float frequency) { // no idea for a better name
 	    return std::sin((float)glfwGetTime() * frequency) * 255.0f;
 	}
+	// --
 	void Engine::loop(double delta_time) {
 	    cube.colour = glm::vec4(colour_buffer(5.0f), colour_buffer(4.0f), colour_buffer(6.0f), 255.0f);
-	    cube.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
+	    
+	    cube.rotation = glm::vec3((float)glfwGetTime() * 50, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
+	    sprite.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, 0.0f);
 	    
 	    // Very simple camera movement.
 	    Core::Camera::move(window.buffer, view, &object_default_shader);
 	    return;
 	}
 	void Engine::render() {
+	    Gfx::Renderer::set_atom_transform(&sprite, &object_default_shader);
+	    Gfx::Renderer::render_atom(&sprite, &object_default_shader);
+	    
 	    Gfx::Renderer::set_atom_transform(&cube, &object_default_shader);
 	    Gfx::Renderer::render_atom(&cube, &object_default_shader);
 	    return;

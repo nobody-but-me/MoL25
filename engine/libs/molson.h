@@ -373,7 +373,6 @@ int molson(set_int)(const char *name, int value, bool use_shader, Shader *shader
     return 0;
 }
 int molson(set_bool)(const char *name, bool value, Shader *shader) {
-    if (value == NULL) return -1;
     glUniform1i(glGetUniformLocation(shader->ID, name), value);
     return 0;
 }

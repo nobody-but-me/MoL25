@@ -114,13 +114,13 @@ namespace Gfx
 	int init_sprite_atom(Atom *sprite_object, std::string texture_path, bool alpha, std::string name) {
 	    sprite_object->name = name;
 	    float vertices[] = {
-		0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 		
-		0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 0.0f
+		0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f, 0.0f
 	    };
 	    glGenVertexArrays(1, &sprite_object->vao);
 	    glGenBuffers(1, &sprite_object->vbo);
@@ -140,13 +140,13 @@ namespace Gfx
 	int init_rect_atom(Atom *rect_object, std::string name) {
 	    rect_object->name = name;
 	    float vertices[] = {
-		0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 		
-		0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 0.0f
+		0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f, 0.0f
 	    };
 	    glGenVertexArrays(1, &rect_object->vao);
 	    glGenBuffers(1, &rect_object->vbo);
@@ -160,24 +160,8 @@ namespace Gfx
 	}
 	
 	int init_atom_vertexes(Atom *object, Shader *shader) {
-	    if (molson(set_bool)("threed_object", false, shader) != 0) {
-		std::cerr << "[FAILED]: Two-dimensional uniform variable setting has failed." << std::endl;
-		return -1;
-	    }
-	    // glVertexAttribPointer(0, vertex_amount, GL_FLOAT, GL_FALSE, vertex_amount * sizeof(float), (void *)0);
-	    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0); // NOTE: check vertex amount later.
-	    glEnableVertexAttribArray(0);
-	    
-	    glBindBuffer(GL_ARRAY_BUFFER, 0);
-	    glBindVertexArray(0);
-	    
-	    return check4opengl_errors();
-	}
-	int init_3d_atom_vertexes(Atom *object, Shader *shader) {
-	    if (molson(set_bool)("threed_object", true, shader) != 0) {
-		std::cerr << "[FAILED]: Three-dimensional uniform variable setting has failed." << std::endl;
-		return -1;
-	    }
+	    // glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
+	    // glEnableVertexAttribArray(0);
 	    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	    glEnableVertexAttribArray(0);
 	    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -188,16 +172,28 @@ namespace Gfx
 	    
 	    return check4opengl_errors();
 	}
+	// int init_3d_atom_vertexes(Atom *object, Shader *shader) {
+	//     molson(set_bool)("threed_object", true, shader);
+	//     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	//     glEnableVertexAttribArray(0);
+	//     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	//     glEnableVertexAttribArray(1);
+	    
+	//     glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//     glBindVertexArray(0);
+	    
+	//     return check4opengl_errors();
+	// }
 	int set_atom_transform(Atom *object, Shader *shader) {
 	    molson(use_shader)(shader);
 	    glm::mat4 trans = glm::mat4(1.0f);
 	    trans = glm::translate(trans, glm::vec3(object->position));
 	    
-	    trans = glm::translate(trans, glm::vec3(0.5f * object->scale[0], 0.5f * object->scale[1], 0.0f));
-	    trans = glm::rotate(trans, glm::radians(object->rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f));
-	    trans = glm::rotate(trans, glm::radians(object->rotation[1]), glm::vec3(0.0f, 1.0f, 0.0f));
-	    trans = glm::rotate(trans, glm::radians(object->rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f));
-	    trans = glm::translate(trans, glm::vec3(-0.5f * object->scale[0], -0.5f * object->scale[1], 0.0f));
+	    trans = glm::translate(trans, glm::vec3(0.5f * object->scale.x, 0.5f * object->scale.y, 0.5f * object->scale.z ));
+	    trans = glm::rotate(trans, glm::radians(object->rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	    trans = glm::rotate(trans, glm::radians(object->rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	    trans = glm::rotate(trans, glm::radians(object->rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	    trans = glm::translate(trans, glm::vec3(-0.5f * object->scale.x, -0.5f * object->scale.y, -0.5f * object->scale.z ));
 	    
 	    trans = glm::scale(trans, glm::vec3(object->scale));
 	    
@@ -219,11 +215,11 @@ namespace Gfx
 	    return 0;
 	}
 	void render_atom(Atom *object, Shader *shader) {
+	    molson(use_shader)(shader);
 	    if (object->texture_path != "") {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, object->texture.id);
 	    }
-	    molson(use_shader)(shader);
 	    glBindVertexArray(object->vao);
 	    glDrawArrays(GL_TRIANGLES, 0, object->indices);
 	    glBindVertexArray(0);
