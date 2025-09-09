@@ -11,34 +11,108 @@
 #include <MOL/Application/core.hpp>
 #include <molson.h>
 
+#define SENSITIVITY 0.1f
+
 namespace Core
 {
     namespace Camera
     {
 	// TODO: Refactor this whole code.
-	const glm::vec3 FRONT = glm::vec3(0.0f, 0.0f, -1.0f);
-	const glm::vec3 UP = glm::vec3(0.0f, 1.0f, 1.0f);
+	// mommy, help me
 	
+	// glm::vec3 position = glm::vec3(0.0f, 0.0f, 50.0f);
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 50.0f);
+	glm::vec3 FRONT = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 UP = glm::vec3(0.0f, 1.0f, 0.0f);
 	
-	static void update(glm::mat4 v, Shader *shader) {
-	    v = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(position.x, position.y, position.y) + FRONT, UP);
+	float last_x = 800.0f / 2.0;
+	float last_y = 600.0 / 2.0;
+	float pitch =  0.0f;
+	float yaw = -90.0f;
+	float fov = 45.0f;
+	
+	float rotation = 0.0f;
+	float speed = 15.0;
+	
+	bool first_mouse = false;
+	
+	Shader *m_lighting_shader;
+	GLFWwindow *m_window;
+	glm::mat4 m_view;
+	Shader *m_shader;
+	
+	void update(glm::mat4 v, Shader *shader) {
+	    v = glm::lookAt(position, position + FRONT, UP);
 	    molson(set_matrix4)("view", &v, true, shader);
 	}
-	// Pretty simple implementation of camera position manipulator;
-	void move(GLFWwindow *w, glm::mat4 view, Shader *shader) {
-	    if (!Core::InputManager::is_key_pressed(w, MOL_LSHIFT)) {
-		// -- TODO: Hard-coded.
-		// General movement: up, down, left right.
-		if (Core::InputManager::is_key_pressed(w, MOL_W))      { position.y += 0.2f * position.z/50.0f; update(view, shader); }
-		else if (Core::InputManager::is_key_pressed(w, MOL_S)) { position.y -= 0.2f * position.z/50.0f; update(view, shader); }
-		if (Core::InputManager::is_key_pressed(w, MOL_A))      { position.x -= 0.2f * position.z/50.0f; update(view, shader); }
-		else if (Core::InputManager::is_key_pressed(w, MOL_D)) { position.x += 0.2f * position.z/50.0f; update(view, shader); }
-		// --
-	    } else {
-	    // Z movement: foward and backward.
-		if (Core::InputManager::is_key_pressed(w, MOL_W))      { position.z -= 0.3f; update(view, shader); }
-		if (Core::InputManager::is_key_pressed(w, MOL_S))      { position.z += 0.3f; update(view, shader); }
+	
+	static void mouse_callback(GLFWwindow* w, double x_position, double y_position) {
+		float pos_x = static_cast<float>(x_position);
+		float pos_y = static_cast<float>(y_position);
+
+		if (first_mouse) {
+		    first_mouse = false;
+		    last_x = pos_x;
+		    last_y = pos_y;
+		}
+		
+		float offset_x = pos_x - last_x;
+		float offset_y = last_y - pos_y;
+		last_x = pos_x;
+		last_y = pos_y;
+		
+		offset_x *= SENSITIVITY;
+		offset_y *= SENSITIVITY;
+		
+		pitch += offset_y;
+		yaw += offset_x;
+		
+		if (pitch < -89.0f) pitch = -89.0f;
+		if (pitch > 89.0f) pitch = 89.0f;
+		
+		glm::vec3 f;
+		f.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		f.y = sin(glm::radians(pitch));
+		f.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		FRONT = glm::normalize(f);
+	    return;
+	}
+	
+	void init(GLFWwindow *w, int window_width, glm::mat4 view, Shader *shader, Shader *lighting_shader) {
+	    update(view, lighting_shader);
+	    update(view, shader);
+	    
+	    m_lighting_shader = lighting_shader;
+	    m_shader = shader;
+	    m_view = view;
+	    m_window = w;
+	    
+	    last_y = (window_width/4*3)/2;
+	    last_x = window_width/2;
+	    
+	    glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	    glfwSetCursorPosCallback(w, mouse_callback);
+	}
+	
+	void move(double delta) {
+	    
+	    float camera_speed = static_cast<float>(speed * delta);
+	    
+	    if (Core::InputManager::is_key_pressed(m_window, MOL_W)) position += camera_speed * FRONT;
+	    if (Core::InputManager::is_key_pressed(m_window, MOL_S)) position -= camera_speed * FRONT;
+	    if (Core::InputManager::is_key_pressed(m_window, MOL_A)) position -= glm::normalize(glm::cross(FRONT, UP)) * camera_speed;
+	    if (Core::InputManager::is_key_pressed(m_window, MOL_D)) position += glm::normalize(glm::cross(FRONT, UP)) * camera_speed;
+	    
+	    if (m_shader != NULL && m_lighting_shader != NULL) {
+		float p[3];
+		p[0] = position[0];
+		p[1] = position[1];
+		p[2] = position[2];
+		
+		molson(set_vector3_f)("view_position", p, true, m_shader);
+		
+		update(m_view, m_lighting_shader);
+		update(m_view, m_shader);
 	    }
 	}
     }

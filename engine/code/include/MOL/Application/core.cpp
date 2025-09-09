@@ -82,7 +82,7 @@ namespace Core
 	    // -- Setting viewport background colour creating a rectangle selection of the ideal with and height and cleaning it with a whitish colour.
 	    glEnable(GL_SCISSOR_TEST);
 	    glScissor(w / 2 - (win->IDEAL_WIDTH / 2), h / 2 - (win->IDEAL_HEIGHT / 2), win->IDEAL_WIDTH, win->IDEAL_HEIGHT);
-	    glClearColor(252.0f / 255.0f, 247.0f / 255.0f, 239.0f / 255.0f, 1.0f);
+	    glClearColor(24.0f / 255.0f, 24.0f / 255.0f, 24.0f / 255.0f, 1.0f);
 	    glClear(GL_COLOR_BUFFER_BIT);
 	    glDisable(GL_SCISSOR_TEST);
 	    return;
@@ -156,8 +156,13 @@ namespace Core
 	}
 	
 	// --------------------------------------------------
+	
 	Shader object_default_shader;
-	Atom sprite, cube, light;
+	Shader light_default_shader;
+	
+	glm::vec3 light_pos(10.0f, 25.0f, 10.0f);
+	Atom cube, light;
+	
 	// --------------------------------------------------
 	void Engine::ready() {
 	    std::cout << "[INFO]: Hello, MoL!" << std::endl;
@@ -166,63 +171,78 @@ namespace Core
 	    view       = glm::mat4(1.0f);
 	    
 	    molson(init_shader)(SHADER_PATH"object_default.vert", SHADER_PATH"object_default.frag", &object_default_shader);
+	    molson(init_shader)(SHADER_PATH"light_default.vert", SHADER_PATH"light_default.frag", &light_default_shader);
 	    
 	    projection = glm::perspective(glm::radians(45.0f), (float)window.width / (float)window.height, 0.1f, 350.0f);
 	    view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -50.0f));
 	    
-	    if (molson(set_matrix4)("projection", &projection, true, &object_default_shader) != 0) {
-		std::cerr << "[FAILED]: Perspective projection setting failed." << std::endl;
-		return;
-	    }
-	    if (molson(set_matrix4)("view", &view, true, &object_default_shader) != 0) {
-		std::cerr << "[FAILED]: View projection setting failed." << std::endl;
-		return;
-	    }
-	    // -- 
+	    // NOTE: likely not the better approach.
+	    if (molson(set_matrix4)("projection", &projection, true, &object_default_shader) != 0) { std::cerr << "[FAILED]: Perspective projection setting failed." << std::endl; return; }
+	    if (molson(set_matrix4)("view", &view, true, &object_default_shader) != 0) { std::cerr << "[FAILED]: View projection setting failed." << std::endl; return; }
 	    
-	    Gfx::Renderer::init_sprite_atom(&sprite, ASSETS_PATH"m2.png", true, "Sprite");
-	    Gfx::Renderer::init_atom_vertexes(&sprite, &object_default_shader);
+	    if (molson(set_matrix4)("projection", &projection, true, &light_default_shader) != 0) { std::cerr << "[FAILED]: Lighting perspective projection setting failed." << std::endl; return; }
+	    if (molson(set_matrix4)("view", &view, true, &light_default_shader) != 0) { std::cerr << "[FAILED]: Lighting view projection setting failed." << std::endl; return; }
+	    
+	    // void init(GLFWwindow *w, glm::mat4 view, Shader *shader, Shader *lighting_shader);
+	    Core::Camera::init(window.buffer, window.width, view, &object_default_shader, &light_default_shader);
+	    
+	    // -- 
 	    
 	    Gfx::Renderer::init_cube_atom(&cube, ASSETS_PATH"m.png", true, "Cube");
 	    Gfx::Renderer::init_atom_vertexes(&cube, &object_default_shader);
 	    
 	    Gfx::Renderer::init_light_atom(&light, "Light");
-	    Gfx::Renderer::init_atom_vertexes(&light, &object_default_shader);
-	    
-	    sprite.colour   = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
-	    sprite.position = glm::vec3(0.0f, 0.0f, 0.0f);
-	    sprite.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	    sprite.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
+	    Gfx::Renderer::init_atom_vertexes(&light, &light_default_shader);
 	    
 	    cube.colour   = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
 	    cube.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	    cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	    cube.scale    = glm::vec3(8.0f, 8.0f, 8.0f);
+	    cube.scale    = glm::vec3(12.0f, 8.0f, 8.0f);
 	    
-	    light.colour   = glm::vec4(200.0f, 200.0f, 200.0f, 255.0f);
-	    light.position = glm::vec3(10.0f, 10.0f, -10.0f);
 	    light.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 	    light.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
+	    
+	    float l[3];
+	    l[0] = light_pos.x;
+	    l[1] = light_pos.y;
+	    l[2] = light_pos.z;
+	    
+	    if (molson(set_vector3_f)("light_position", l, true, &object_default_shader) != 0) {
+		std::cerr << "[FAILED]: Light position uniform variable could not be set for object default fragment shader." << std::endl;
+		return;
+	    }
+	    light.position = light_pos;
 	    return;
 	}
 	
 	void Engine::loop(double delta_time) {
-	    cube.rotation = glm::vec3((float)glfwGetTime() * 50, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
-	    sprite.rotation = glm::vec3(0.0f, (float)glfwGetTime() * 50, 0.0f);
+	    // -- for fun
 	    
-	    // Very simple camera movement.
-	    Core::Camera::move(window.buffer, view, &object_default_shader);
+	    cube.rotation = glm::vec3((float)glfwGetTime() * 50, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
+	    
+	    light_pos.x = std::cos((float)glfwGetTime() * 0.5f) * 15.0f;
+	    light_pos.y = std::sin((float)glfwGetTime() * 0.5f) * 15.0f;
+	    light_pos.z = std::sin((float)glfwGetTime() * 0.5f) * 15.0f;
+	    
+	    float l[3];
+	    l[0] = light_pos.x;
+	    l[1] = light_pos.y;
+	    l[2] = light_pos.z;
+	    
+	    if (molson(set_vector3_f)("light_position", l, true, &object_default_shader) != 0) { std::cerr << "[FAILED]: Light position uniform variable could not be set for object default fragment shader." << std::endl; return; }
+	    light.position = light_pos;
+	    
+	    // --
+	    
+	    Core::Camera::move(delta_time);
 	    return;
 	}
 	void Engine::render() {
-	    Gfx::Renderer::set_atom_transform(&sprite, &object_default_shader);
-	    Gfx::Renderer::render_atom(&sprite, &object_default_shader);
-	    
 	    Gfx::Renderer::set_atom_transform(&cube, &object_default_shader);
 	    Gfx::Renderer::render_atom(&cube, &object_default_shader);
 	    
-	    Gfx::Renderer::set_atom_transform(&light, &object_default_shader);
-	    Gfx::Renderer::render_atom(&light, &object_default_shader);
+	    Gfx::Renderer::set_atom_transform(&light, &light_default_shader);
+	    Gfx::Renderer::render_atom(&light, &light_default_shader);
 	    return;
 	}
 	

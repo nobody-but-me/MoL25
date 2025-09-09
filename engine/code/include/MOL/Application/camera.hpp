@@ -10,9 +10,12 @@
 namespace Core
 {
     // Is it really the better way to do this?
+    // no, daniel, it is not.
     namespace Camera
     {
-	void move(GLFWwindow *w, glm::mat4 view, Shader *shader);
+	void init(GLFWwindow *w, int window_width, glm::mat4 view, Shader *shader, Shader *lighting_shader);
+	void update(glm::mat4 v, Shader *shader);
+	void move(double delta);
     }
 }
 
