@@ -163,9 +163,12 @@ namespace Core
 	glm::vec3 light_pos(10.0f, 25.0f, 10.0f);
 	Atom cube, light_cube;
 	
-	float specular_colour[3] = {1.0f, 1.0f, 1.0f};
-	float ambient_colour[3]  = {0.1f, 0.1f, 0.1f};
-	float diffuse_colour[3]  = {0.5f, 0.5f, 0.5f};
+	// float light_specular_colour[3] = {1.0f, 1.0f, 1.0f};
+	// float light_ambient_colour[3]  = {0.1f, 0.1f, 0.1f};
+	// float light_diffuse_colour[3]  = {0.5f, 0.5f, 0.5f};
+	float light_specular_colour[3] = {1.0f, 1.0f, 1.0f};
+	float light_ambient_colour[3]  = {1.0f, 1.0f, 1.0f};
+	float light_diffuse_colour[3]  = {1.0f, 1.0f, 1.0f};
 	
 	// --------------------------------------------------
 	void Engine::ready() {
@@ -221,9 +224,9 @@ namespace Core
 	    
 	    float l[3] = {light_pos.x, light_pos.y, light_pos.z};
 	    
-	    molson(set_vector3_f)("object_light.specular", specular_colour, true, &object_default_shader);
-	    molson(set_vector3_f)("object_light.ambient", ambient_colour, true, &object_default_shader);
-	    molson(set_vector3_f)("object_light.diffuse", diffuse_colour, true, &object_default_shader);
+	    molson(set_vector3_f)("object_light.specular", light_specular_colour, true, &object_default_shader);
+	    molson(set_vector3_f)("object_light.ambient", light_ambient_colour, true, &object_default_shader);
+	    molson(set_vector3_f)("object_light.diffuse", light_diffuse_colour, true, &object_default_shader);
 	    molson(set_vector3_f)("object_light.position", l, true, &object_default_shader);
 	    
 	    light_cube.position = light_pos;
