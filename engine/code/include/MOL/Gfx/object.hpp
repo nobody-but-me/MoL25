@@ -18,6 +18,12 @@ typedef struct
     bool initialized;
     std::string name;
     
+    float shininess = 32.0f;
+    bool material = false;
+    glm::vec3 specular;
+    glm::vec3 diffuse;
+    glm::vec3 ambient;
+    
     unsigned int light_vao;
     unsigned int indices;
     unsigned int vbo;

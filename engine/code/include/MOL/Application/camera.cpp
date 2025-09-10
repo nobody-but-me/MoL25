@@ -103,14 +103,13 @@ namespace Core
 	    if (Core::InputManager::is_key_pressed(m_window, MOL_A)) position -= glm::normalize(glm::cross(FRONT, UP)) * camera_speed;
 	    if (Core::InputManager::is_key_pressed(m_window, MOL_D)) position += glm::normalize(glm::cross(FRONT, UP)) * camera_speed;
 	    
+	    if (Core::InputManager::is_key_pressed(m_window, MOL_LSHIFT)) position.y -= camera_speed;
+	    if (Core::InputManager::is_key_pressed(m_window, MOL_SPACE)) position.y += camera_speed;
+	    
 	    if (m_shader != NULL && m_lighting_shader != NULL) {
-		float p[3];
-		p[0] = position[0];
-		p[1] = position[1];
-		p[2] = position[2];
+		float new_position[3] = {position.x, position.y, position.z};
 		
-		molson(set_vector3_f)("view_position", p, true, m_shader);
-		
+		molson(set_vector3_f)("view_position", new_position, true, m_shader);
 		update(m_view, m_lighting_shader);
 		update(m_view, m_shader);
 	    }
