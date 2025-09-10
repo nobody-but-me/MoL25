@@ -194,6 +194,7 @@ namespace Core
 	    // -- 
 	    
 	    Gfx::Renderer::init_cube_atom(&cube, ASSETS_PATH"m.png", true, "Cube");
+	    // Gfx::Renderer::init_cube_atom(&cube, "", true, "Cube");
 	    Gfx::Renderer::init_atom_vertexes(&cube, &object_default_shader);
 	    
 	    Gfx::Renderer::init_light_atom(&light_cube, "Light");
@@ -204,10 +205,10 @@ namespace Core
 	    cube.scale    = glm::vec3(12.0f, 8.0f, 8.0f);
 	    cube.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	    
-	    cube.specular = glm::vec3(0.628281f, 0.555802f, 0.366065f);
-	    cube.diffuse = glm::vec3(0.75164f, 0.60648f, 0.22648f);
-	    cube.ambient = glm::vec3(0.24725f, 0.1995f, 0.0745f);
-	    cube.shininess = 0.4f;
+	    cube.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+	    // cube.diffuse = glm::vec3(0.75164f, 0.60648f, 0.22648f);
+	    // cube.ambient = glm::vec3(0.24725f, 0.1995f, 0.0745f);
+	    cube.shininess = 0.2f;
 	    cube.material = true;
 	    
 	    light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
