@@ -15,14 +15,31 @@ typedef struct
     Texture texture;
     bool alpha;
     
-    bool initialized;
-    std::string name;
-    
     float shininess = 32.0f;
     bool material = false;
+    
     glm::vec3 specular;
     glm::vec3 diffuse;
     glm::vec3 ambient;
+    
+} Material;
+
+typedef struct
+{
+    
+    // std::string texture_path = "";
+    // Texture texture;
+    // bool alpha;
+    
+    bool initialized;
+    std::string name;
+    
+    // float shininess = 32.0f;
+    // bool material = false;
+    // glm::vec3 specular;
+    // glm::vec3 diffuse;
+    // glm::vec3 ambient;
+    Material material;
     
     unsigned int light_vao;
     unsigned int indices;

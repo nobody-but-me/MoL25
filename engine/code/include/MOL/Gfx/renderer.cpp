@@ -48,7 +48,7 @@ namespace Gfx
 	    return 0;
 	}
 	
-	int init_cube_atom(Atom *cube_object, std::string texture_path, bool alpha, std::string name) {
+	int init_cube_atom(Atom *cube_object, Material *material, std::string name) {
 	    cube_object->name = name;
 	    float vertices[] = {
 		
@@ -103,10 +103,9 @@ namespace Gfx
 	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	    cube_object->indices = 36;
 	    
-	    cube_object->alpha = alpha;
-	    if (texture_path != "") {
-		cube_object->texture = molson(load_texture)(texture_path.c_str(), alpha);
-		cube_object->texture_path = texture_path;
+	    if (material != NULL) {
+		if (material->texture_path != "") material->texture = molson(load_texture)(material->texture_path.c_str(), material->alpha);
+		cube_object->material = *material;
 	    }
 	    return check4opengl_errors();
 	}
@@ -170,33 +169,7 @@ namespace Gfx
 	
 	// --------------------------------------------------
 	
-	int init_sprite_atom(Atom *sprite_object, std::string texture_path, bool alpha, std::string name) {
-	    sprite_object->name = name;
-	    float vertices[] = {
-		0.0f, 1.0f, 1.0f,  0.0f, 1.0f,  0.0f, 0.0f, -1.0f,
-		1.0f, 0.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
-		
-		0.0f, 1.0f, 1.0f,  0.0f, 1.0f,  0.0f, 0.0f, -1.0f,
-		1.0f, 1.0f, 1.0f,  1.0f, 1.0f,  0.0f, 0.0f, -1.0f,
-		1.0f, 0.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f, -1.0f
-	    };
-	    glGenVertexArrays(1, &sprite_object->vao);
-	    glBindVertexArray(sprite_object->vao);
-	    glGenBuffers(1, &sprite_object->vbo);
-	    
-	    glBindBuffer(GL_ARRAY_BUFFER, sprite_object->vbo);
-	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	    sprite_object->indices = 6;
-	    
-	    sprite_object->alpha = alpha;
-	    if (texture_path != "") {
-		sprite_object->texture = molson(load_texture)(texture_path.c_str(), alpha);
-		sprite_object->texture_path = texture_path;
-	    }
-	    return check4opengl_errors();
-	}
-	int init_rect_atom(Atom *rect_object, std::string name) {
+	int init_rect_atom(Atom *rect_object, Material *material, std::string name) {
 	    rect_object->name = name;
 	    float vertices[] = {
 		0.0f, 1.0f, 1.0f,  0.0f, 1.0f,  0.0f, 0.0f, -1.0f,
@@ -215,6 +188,10 @@ namespace Gfx
 	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	    rect_object->indices = 6;
 	    
+	    if (material != NULL) {
+		if (material->texture_path != "") material->texture = molson(load_texture)(material->texture_path.c_str(), material->alpha);
+		rect_object->material = *material;
+	    }
 	    return check4opengl_errors();
 	}
 	int init_atom_vertexes(Atom *object, Shader *shader) {
@@ -229,7 +206,6 @@ namespace Gfx
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 	    }
-	    
 	    glBindBuffer(GL_ARRAY_BUFFER, 0);
 	    glBindVertexArray(0);
 	    
@@ -252,52 +228,62 @@ namespace Gfx
 		std::cerr << "[FAILED]: Object transform could not be set." << std::endl;
 		return 1;
 	    }
-	    // if (object->texture_path != "") molson(set_bool)("is_textured", true, shader);
 	    return 0;
 	}
 	void render_atom(Atom *object, Shader *shader) {
 	    molson(use_shader)(shader);
 	    
-	    if (object->texture_path == "") {
-		molson(set_bool)("is_textured", false, shader);
-		
-		float spec[3];
-		float diff[3];
-		float ambt[3];
-		
-		if (object->material) {
-		    spec[0] = object->specular.x; spec[1] = object->specular.y; spec[2] = object->specular.z;
-		    diff[0] = object->diffuse.x; diff[1] = object->diffuse.y; diff[2] = object->diffuse.z;
-		    ambt[0] = object->ambient.x; ambt[1] = object->ambient.y; ambt[2] = object->ambient.z;
+	    // NOTE: that's so ugly.
+	    if (object->light_vao == NULL) {
+		if (object->material.texture_path == "") {
+		    molson(set_bool)("is_textured", false, shader);
+		    float spec[3], diff[3], ambt[3];
+		    
+		    if (object->material.specular == glm::vec3(0) || object->material.ambient == glm::vec3(0) || object->material.diffuse == glm::vec3(0)) {
+			ambt[0] = object->colour.x / 255; ambt[1] = object->colour.y / 255; ambt[2] = object->colour.z / 255;
+			diff[0] = object->colour.x / 255; diff[1] = object->colour.y / 255; diff[2] = object->colour.z / 255;
+			spec[0] = 0.5f; spec[1] = 0.5f; spec[2] = 0.5f;
+		    } else {
+			// NOTE : don't know if that's the right way to do that.
+			spec[0] = object->colour.x / 255 * object->material.specular.x;
+			spec[1] = object->colour.y / 255 * object->material.specular.y;
+			spec[2] = object->colour.z / 255 * object->material.specular.z;
+			
+			diff[0] = object->colour.x / 255 * object->material.diffuse.x;
+			diff[1] = object->colour.y / 255 * object->material.diffuse.y;
+			diff[2] = object->colour.z / 255 * object->material.diffuse.z;
+			
+			ambt[0] = object->colour.x / 255 * object->material.ambient.x;
+			ambt[1] = object->colour.y / 255 * object->material.ambient.y;
+			ambt[2] = object->colour.z / 255 * object->material.ambient.z;
+		    }
+		    
+		    molson(set_float)("solid_material.shine", object->material.shininess, true, shader);
+		    molson(set_vector3_f)("solid_material.specular", spec, true, shader);
+		    molson(set_vector3_f)("solid_material.ambient", ambt, true, shader);
+		    molson(set_vector3_f)("solid_material.diffuse", diff, true, shader);
+		    
 		} else {
-		    ambt[0] = object->colour.x / 255; ambt[1] = object->colour.y / 255; ambt[2] = object->colour.z / 255;
-		    diff[0] = object->colour.x / 255; diff[1] = object->colour.y / 255; diff[2] = object->colour.z / 255;
-		    spec[0] = 0.5f; spec[1] = 0.5f; spec[2] = 0.5f;
+		    molson(set_bool)("is_textured", true, shader);
+		    
+		    molson(set_int)("texture_material.diffuse", 0, true, shader);
+		    glActiveTexture(GL_TEXTURE0);
+		    glBindTexture(GL_TEXTURE_2D, object->material.texture.id);
+		    
+		    float spec[3];
+		    if (object->material.specular == glm::vec3(0)) {
+			spec[0] = 5.0f;
+			spec[1] = 5.0f;
+			spec[2] = 5.0f;
+		    } else {
+			spec[0] = object->material.specular.x;
+			spec[1] = object->material.specular.y;
+			spec[2] = object->material.specular.z;
+		    }
+		    
+		    molson(set_float)("texture_material.shine", object->material.shininess, true, shader);
+		    molson(set_vector3_f)("texture_material.specular", spec, true, shader);
 		}
-		molson(set_float)("solid_material.shine", object->shininess, true, shader);
-		molson(set_vector3_f)("solid_material.specular", spec, true, shader);
-		molson(set_vector3_f)("solid_material.ambient", ambt, true, shader);
-		molson(set_vector3_f)("solid_material.diffuse", diff, true, shader);
-		
-	    } else {
-		molson(set_bool)("is_textured", true, shader);
-		
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, object->texture.id);
-		molson(set_int)("texture_material.diffuse", 0, true, shader);
-		
-		float spec[3];
-		if (object->material) {
-		    spec[0] = object->specular.x;
-		    spec[1] = object->specular.y;
-		    spec[2] = object->specular.z;
-		} else {
-		    spec[0] = 0.5f;
-		    spec[1] = 0.5f;
-		    spec[2] = 0.5f;
-		}
-		molson(set_float)("texture_material.shine", object->shininess, true, shader);
-		molson(set_vector3_f)("texture_material.specular", spec, true, shader);
 	    }
 	    if (object->light_vao == NULL) glBindVertexArray(object->vao);
 	    else glBindVertexArray(object->light_vao);

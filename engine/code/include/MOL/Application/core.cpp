@@ -190,20 +190,24 @@ namespace Core
 	    Core::Camera::init(window.buffer, window.width, view, &object_default_shader, &light_default_shader);
 	    // -- 
 	    
-	    Gfx::Renderer::init_cube_atom(&cube, ASSETS_PATH"m.png", true, "Cube");
+	    Material main_texture;
+	    // main_texture.texture_path = ASSETS_PATH"m.png";
+	    main_texture.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+	    main_texture.diffuse = glm::vec3(2.0f, 2.0f, 2.0f);
+	    main_texture.ambient = glm::vec3(1.0f, 1.0f, 1.0f);
+	    main_texture.shininess = 32.0f;
+	    // main_texture.alpha = true;
+	    
+	    Gfx::Renderer::init_cube_atom(&cube, &main_texture, "Cube");
 	    Gfx::Renderer::init_atom_vertexes(&cube, &object_default_shader);
 	    
-	    Gfx::Renderer::init_light_atom(&light_cube, "Light");
-	    Gfx::Renderer::init_atom_vertexes(&light_cube, &light_default_shader);
-	    
-	    cube.colour   = glm::vec4(255.0f, 255.0f, 255.0f, 255.0f);
+	    cube.colour   = glm::vec4(255.0f, 255.0f, 0.0f, 255.0f);
 	    cube.rotation = glm::vec3(0.0f, 25.0f, -25.0f);
 	    cube.scale    = glm::vec3(12.0f, 8.0f, 8.0f);
 	    cube.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	    
-	    cube.specular = glm::vec3(0.5f, 0.5f, 0.5f);
-	    cube.shininess = 32.0f;
-	    cube.material = true;
+	    Gfx::Renderer::init_light_atom(&light_cube, "Light");
+	    Gfx::Renderer::init_atom_vertexes(&light_cube, &light_default_shader);
 	    
 	    light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
 	    light_cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
