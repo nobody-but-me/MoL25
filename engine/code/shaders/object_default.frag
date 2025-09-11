@@ -7,17 +7,21 @@ struct Light {
     vec3 diffuse;
 };
 
-struct Material {
-    
-    sampler2D object_image;
-    
+struct SolidMaterial {
     vec3 specular;
     vec3 ambient;
     vec3 diffuse;
     float shine;
     
 };
-uniform Material object_material;
+struct TextureMaterial {
+    sampler2D diffuse;
+    vec3 specular;
+    float shine;
+};
+
+uniform TextureMaterial texture_material;
+uniform SolidMaterial solid_material;
 uniform Light object_light;
 
 uniform bool is_textured = false;
@@ -43,24 +47,26 @@ void main() {
      
      vec3 reflect_dir = reflect(-light_dir, normalized_normal);
      vec3 view_dir = normalize(view_position - frag_position);
-     float spec = pow(max(dot(view_dir, reflect_dir), 0.0), object_material.shine);
      
-     if (is_textured == false) {
-	 vec3 specular = object_light.specular * (spec * object_material.specular);
-	 vec3 diffuse = object_light.diffuse * (diff * object_material.diffuse);
-	 vec3 ambient = object_light.ambient * object_material.ambient;
+     if (is_textured == true) {
+	 float spec = pow(max(dot(view_dir, reflect_dir), 0.0), texture_material.shine);
+	 
+	 vec3 diffuse = object_light.diffuse * diff * vec3(texture(texture_material.diffuse, texture_coords).rgb);
+	 vec3 ambient = object_light.ambient * vec3(texture(texture_material.diffuse, texture_coords).rgb);
+	 vec3 specular = object_light.specular * (spec * texture_material.specular);
 	 
 	 vec3 result = ambient + diffuse + specular;
 	 frag_colour = vec4(result, 1.0f);
+	 // frag_colour = vec4(result, 1.0f) * texture(texture_material.object_image, texture_coords);
 	 
      } else {
-	 vec3 diffuse = object_light.diffuse * diff * texture(object_material.object_image, texture_coords).rgb;
-	 vec3 ambient = object_light.ambient * texture(object_material.object_image, texture_coords).rgb;
-	 vec3 specular = object_light.specular * (spec * object_material.specular);
+	 float spec = pow(max(dot(view_dir, reflect_dir), 0.0), solid_material.shine);
+	 
+	 vec3 specular = object_light.specular * (spec * solid_material.specular);
+	 vec3 diffuse = object_light.diffuse * (diff * solid_material.diffuse);
+	 vec3 ambient = object_light.ambient * solid_material.ambient;
 	 
 	 vec3 result = ambient + diffuse + specular;
 	 frag_colour = vec4(result, 1.0f);
-	 
-	 // frag_colour = vec4(result, 1.0f) * texture(object_material.object_image, texture_coords);
      }
 }

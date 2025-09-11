@@ -163,12 +163,9 @@ namespace Core
 	glm::vec3 light_pos(10.0f, 25.0f, 10.0f);
 	Atom cube, light_cube;
 	
-	// float light_specular_colour[3] = {1.0f, 1.0f, 1.0f};
-	// float light_ambient_colour[3]  = {0.1f, 0.1f, 0.1f};
-	// float light_diffuse_colour[3]  = {0.5f, 0.5f, 0.5f};
 	float light_specular_colour[3] = {1.0f, 1.0f, 1.0f};
-	float light_ambient_colour[3]  = {1.0f, 1.0f, 1.0f};
-	float light_diffuse_colour[3]  = {1.0f, 1.0f, 1.0f};
+	float light_ambient_colour[3]  = {0.1f, 0.1f, 0.1f};
+	float light_diffuse_colour[3]  = {0.5f, 0.5f, 0.5f};
 	
 	// --------------------------------------------------
 	void Engine::ready() {
@@ -194,7 +191,6 @@ namespace Core
 	    // -- 
 	    
 	    Gfx::Renderer::init_cube_atom(&cube, ASSETS_PATH"m.png", true, "Cube");
-	    // Gfx::Renderer::init_cube_atom(&cube, "", true, "Cube");
 	    Gfx::Renderer::init_atom_vertexes(&cube, &object_default_shader);
 	    
 	    Gfx::Renderer::init_light_atom(&light_cube, "Light");
@@ -206,9 +202,7 @@ namespace Core
 	    cube.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	    
 	    cube.specular = glm::vec3(0.5f, 0.5f, 0.5f);
-	    // cube.diffuse = glm::vec3(0.75164f, 0.60648f, 0.22648f);
-	    // cube.ambient = glm::vec3(0.24725f, 0.1995f, 0.0745f);
-	    cube.shininess = 0.2f;
+	    cube.shininess = 32.0f;
 	    cube.material = true;
 	    
 	    light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);

@@ -274,18 +274,17 @@ namespace Gfx
 		    diff[0] = object->colour.x / 255; diff[1] = object->colour.y / 255; diff[2] = object->colour.z / 255;
 		    spec[0] = 0.5f; spec[1] = 0.5f; spec[2] = 0.5f;
 		}
-		
-		molson(set_float)("object_material.shine", object->shininess, true, shader);
-		molson(set_vector3_f)("object_material.specular", spec, true, shader);
-		molson(set_vector3_f)("object_material.ambient", ambt, true, shader);
-		molson(set_vector3_f)("object_material.diffuse", diff, true, shader);
+		molson(set_float)("solid_material.shine", object->shininess, true, shader);
+		molson(set_vector3_f)("solid_material.specular", spec, true, shader);
+		molson(set_vector3_f)("solid_material.ambient", ambt, true, shader);
+		molson(set_vector3_f)("solid_material.diffuse", diff, true, shader);
 		
 	    } else {
-		molson(set_int)("object_material.object_image", 0, true, shader);
 		molson(set_bool)("is_textured", true, shader);
 		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, object->texture.id);
+		molson(set_int)("texture_material.diffuse", 0, true, shader);
 		
 		float spec[3];
 		if (object->material) {
@@ -297,10 +296,9 @@ namespace Gfx
 		    spec[1] = 0.5f;
 		    spec[2] = 0.5f;
 		}
-		molson(set_float)("object_material.shine", object->shininess, true, shader);
-		molson(set_vector3_f)("object_material.specular", spec, true, shader);
+		molson(set_float)("texture_material.shine", object->shininess, true, shader);
+		molson(set_vector3_f)("texture_material.specular", spec, true, shader);
 	    }
-	    
 	    if (object->light_vao == NULL) glBindVertexArray(object->vao);
 	    else glBindVertexArray(object->light_vao);
 	    glDrawArrays(GL_TRIANGLES, 0, object->indices);
