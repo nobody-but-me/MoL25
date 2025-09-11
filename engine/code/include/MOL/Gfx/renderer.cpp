@@ -104,6 +104,7 @@ namespace Gfx
 	    cube_object->indices = 36;
 	    
 	    if (material != NULL) {
+		if (material->specular_map_path != "") material->specular_map = molson(load_texture)(material->specular_map_path.c_str(), material->specular_map_alpha);
 		if (material->texture_path != "") material->texture = molson(load_texture)(material->texture_path.c_str(), material->alpha);
 		cube_object->material = *material;
 	    }
@@ -189,6 +190,7 @@ namespace Gfx
 	    rect_object->indices = 6;
 	    
 	    if (material != NULL) {
+		if (material->specular_map_path != "") material->specular_map = molson(load_texture)(material->specular_map_path.c_str(), material->specular_map_alpha);
 		if (material->texture_path != "") material->texture = molson(load_texture)(material->texture_path.c_str(), material->alpha);
 		rect_object->material = *material;
 	    }
@@ -269,6 +271,12 @@ namespace Gfx
 		    molson(set_int)("texture_material.diffuse", 0, true, shader);
 		    glActiveTexture(GL_TEXTURE0);
 		    glBindTexture(GL_TEXTURE_2D, object->material.texture.id);
+		    
+		    if (object->material.specular_map_path != "") {
+			molson(set_int)("texture_material.specular", 1, true, shader);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, object->material.specular_map.id);
+		    }
 		    
 		    float spec[3];
 		    if (object->material.specular == glm::vec3(0)) {

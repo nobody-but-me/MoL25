@@ -15,6 +15,10 @@ typedef struct
     Texture texture;
     bool alpha;
     
+    std::string specular_map_path = "";
+    bool specular_map_alpha;
+    Texture specular_map;
+    
     float shininess = 32.0f;
     bool material = false;
     
@@ -27,18 +31,9 @@ typedef struct
 typedef struct
 {
     
-    // std::string texture_path = "";
-    // Texture texture;
-    // bool alpha;
-    
     bool initialized;
     std::string name;
     
-    // float shininess = 32.0f;
-    // bool material = false;
-    // glm::vec3 specular;
-    // glm::vec3 diffuse;
-    // glm::vec3 ambient;
     Material material;
     
     unsigned int light_vao;

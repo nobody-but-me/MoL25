@@ -15,8 +15,8 @@ struct SolidMaterial {
     
 };
 struct TextureMaterial {
+    sampler2D specular;
     sampler2D diffuse;
-    vec3 specular;
     float shine;
 };
 
@@ -51,13 +51,12 @@ void main() {
      if (is_textured == true) {
 	 float spec = pow(max(dot(view_dir, reflect_dir), 0.0), texture_material.shine);
 	 
+	 vec3 specular = object_light.specular * spec * vec3(texture(texture_material.specular, texture_coords).rgb);
 	 vec3 diffuse = object_light.diffuse * diff * vec3(texture(texture_material.diffuse, texture_coords).rgb);
 	 vec3 ambient = object_light.ambient * vec3(texture(texture_material.diffuse, texture_coords).rgb);
-	 vec3 specular = object_light.specular * (spec * texture_material.specular);
 	 
 	 vec3 result = ambient + diffuse + specular;
 	 frag_colour = vec4(result, 1.0f);
-	 // frag_colour = vec4(result, 1.0f) * texture(texture_material.object_image, texture_coords);
 	 
      } else {
 	 float spec = pow(max(dot(view_dir, reflect_dir), 0.0), solid_material.shine);
