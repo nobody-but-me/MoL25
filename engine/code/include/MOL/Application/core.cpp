@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -38,7 +39,8 @@ namespace Core
 	    return;
 	}
 	WindowManager::WINDOW create_window(unsigned int w, unsigned int h, std::string title) {
-	    WindowManager::WINDOW window;
+	    WindowManager::WINDOW window;;
+	    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	    window.buffer = glfwCreateWindow(w, h, title.c_str(), nullptr, nullptr);
 	    
 	    // Makes sure window was initialized correctly.
@@ -160,8 +162,8 @@ namespace Core
 	Shader object_default_shader;
 	Shader light_default_shader;
 	
-	glm::vec3 light_pos(10.0f, 25.0f, 10.0f);
-	Atom cube, light_cube;
+	glm::vec3 light_pos(-0.2f, -20.0f, -25.0f);
+	Atom cube, plane, light_cube;
 	
 	float light_specular_colour[3] = {1.0f, 1.0f, 1.0f};
 	float light_ambient_colour[3]  = {0.1f, 0.1f, 0.1f};
@@ -195,19 +197,25 @@ namespace Core
 	    // main_texture.diffuse = glm::vec3(2.0f, 2.0f, 2.0f);
 	    // main_texture.ambient = glm::vec3(1.0f, 1.0f, 1.0f);
 	    
-	    Material main_texture;
-	    main_texture.specular_map_path = ASSETS_PATH"container2_specular.png";
-	    main_texture.specular_map_alpha = true;
+	    Material texture;
+	    texture.specular_map_path = ASSETS_PATH"container2_specular.png";
+	    texture.specular_map_alpha = true;
 	    
-	    main_texture.texture_path = ASSETS_PATH"container2.png";
-	    main_texture.alpha = true;
+	    texture.texture_path = ASSETS_PATH"container2.png";
+	    texture.alpha = true;
 	    
-	    main_texture.specular = glm::vec3(0.5f, 0.5f, 0.5f);
-	    main_texture.shininess = 32.0f;
+	    texture.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+	    texture.shininess = 32.0f;
+	    
+	    Material colour;
+	    colour.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+	    colour.diffuse = glm::vec3(0.2f, 0.2f, 0.2f);
+	    colour.ambient = glm::vec3(1.0f, 1.0f, 1.0f);
+	    colour.shininess = 8.0f;
 	    
 	    // --
 	    
-	    Gfx::Renderer::init_cube_atom(&cube, &main_texture, "Cube");
+	    Gfx::Renderer::init_cube_atom(&cube, &texture, "Cube");
 	    Gfx::Renderer::init_atom_vertexes(&cube, &object_default_shader);
 	    
 	    cube.colour   = glm::vec4(255.0f, 255.0f, 0.0f, 255.0f);
@@ -215,29 +223,42 @@ namespace Core
 	    cube.scale    = glm::vec3(8.0f, 8.0f, 8.0f);
 	    cube.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	    
+	    Gfx::Renderer::init_rect_atom(&plane, &colour, "Plane");
+	    Gfx::Renderer::init_atom_vertexes(&plane, &object_default_shader);
+	    
+	    plane.colour   = glm::vec4(100.0f, 80.0f, 80.0f, 255.0f);
+	    plane.position = glm::vec3(-25.0f, -25.0f, -25.0f);
+	    plane.scale    = glm::vec3(50.0f, 50.0f, 50.0f);
+	    plane.rotation = glm::vec3(90.0f, 0.0f, 0.0f);
+	    
 	    Gfx::Renderer::init_light_atom(&light_cube, "Light");
 	    Gfx::Renderer::init_atom_vertexes(&light_cube, &light_default_shader);
 	    
 	    light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
 	    light_cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	    light_cube.position = light_pos;
+	    light_cube.position = glm::vec3(light_pos.x * -1.0f, light_pos.y * -1.0f, light_pos.z * -1.0f);
+	    std::cout << light_cube.position.x << std::endl;
+	    std::cout << light_cube.position.y << std::endl;
+	    std::cout << light_cube.position.z << std::endl;
+	    
+	    molson(set_vector3_f)("object_light.specular", light_specular_colour, true, &object_default_shader);
+	    molson(set_vector3_f)("object_light.ambient", light_ambient_colour, true, &object_default_shader);
+	    molson(set_vector3_f)("object_light.diffuse", light_diffuse_colour, true, &object_default_shader);
+	    
+	    float l[4] = {light_pos.x, light_pos.y, light_pos.z, 0.0f};
+	    molson(set_vector4_f)("object_light.light_vector", l, true, &object_default_shader);
 	    return;
 	}
 	
 	void Engine::loop(double delta_time) {
 	    // cube.rotation = glm::vec3((float)glfwGetTime() * 50, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
+	    plane.rotation.z = (float)glfwGetTime() * 15;
 	    
-	    light_pos.x = std::cos((float)glfwGetTime() * 0.5f) * 15.0f;
-	    light_pos.y = std::sin((float)glfwGetTime() * 0.5f) * 15.0f;
+	    // light_pos.x = std::cos((float)glfwGetTime() * 0.5f) * 15.0f;
+	    // light_pos.y = std::sin((float)glfwGetTime() * 0.5f) * 15.0f;
 	    
-	    float l[3] = {light_pos.x, light_pos.y, light_pos.z};
-	    
-	    molson(set_vector3_f)("object_light.specular", light_specular_colour, true, &object_default_shader);
-	    molson(set_vector3_f)("object_light.ambient", light_ambient_colour, true, &object_default_shader);
-	    molson(set_vector3_f)("object_light.diffuse", light_diffuse_colour, true, &object_default_shader);
-	    molson(set_vector3_f)("object_light.position", l, true, &object_default_shader);
-	    
-	    light_cube.position = light_pos;
+	    // float l[4] = {light_pos.x, light_pos.y, light_pos.z, 0.0f};
+	    // molson(set_vector4_f)("object_light.light_vector", l, true, &object_default_shader);
 	    
 	    Core::Camera::move(delta_time);
 	    return;
@@ -245,6 +266,9 @@ namespace Core
 	void Engine::render() {
 	    Gfx::Renderer::set_atom_transform(&cube, &object_default_shader);
 	    Gfx::Renderer::render_atom(&cube, &object_default_shader);
+	    
+	    Gfx::Renderer::set_atom_transform(&plane, &object_default_shader);
+	    Gfx::Renderer::render_atom(&plane, &object_default_shader);
 	    
 	    Gfx::Renderer::set_atom_transform(&light_cube, &light_default_shader);
 	    Gfx::Renderer::render_atom(&light_cube, &light_default_shader);

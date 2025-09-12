@@ -1,7 +1,16 @@
 #version 330 core
 
-struct Light {
-    vec3 position;
+// struct Light {
+//     vec3 position;
+    
+//     vec3 specular;
+//     vec3 ambient;
+//     vec3 diffuse;
+// };
+
+struct DirectionLight {
+    vec4 light_vector;
+    
     vec3 specular;
     vec3 ambient;
     vec3 diffuse;
@@ -22,7 +31,7 @@ struct TextureMaterial {
 
 uniform TextureMaterial texture_material;
 uniform SolidMaterial solid_material;
-uniform Light object_light;
+uniform DirectionLight object_light;
 
 uniform bool is_textured = false;
 
@@ -42,7 +51,12 @@ void main() {
      
      vec3 normalized_normal = normalize(normal);
      
-     vec3 light_dir = normalize(object_light.position - frag_position);
+     vec3 light_dir;
+     if (object_light.light_vector.w == 0.0f) {
+         light_dir = normalize(-object_light.light_vector.xyz);
+     } else {
+         light_dir = normalize(object_light.light_vector.xyz - frag_position);
+     }
      float diff = max(dot(normalized_normal, light_dir), 0.0f);
      
      vec3 reflect_dir = reflect(-light_dir, normalized_normal);
