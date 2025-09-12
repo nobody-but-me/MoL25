@@ -92,7 +92,7 @@ namespace Core
 	{
 	    private:
 		const std::string  DEFAULT_WINDOW_TITLE  = "MoL Game Engine";
-		const unsigned int DEFAULT_WINDOW_WIDTH  = 840;
+		const unsigned int DEFAULT_WINDOW_WIDTH  = 1024;
 		const unsigned int DEFAULT_WINDOW_HEIGHT = DEFAULT_WINDOW_WIDTH/16*9;
 		WindowManager::WINDOW window;
 		

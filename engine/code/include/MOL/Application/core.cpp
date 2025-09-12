@@ -35,7 +35,8 @@ namespace Core
 	static void window_buffer_size_callback(GLFWwindow *win, int w, int h) {
 	    glfwGetFramebufferSize(win, &w, &h);
 	    // TODO: hard-coded.
-	    glViewport(w / 2 - (640 / 2), h / 2 - (480 / 2), 640, 480);
+	    unsigned int width = 1024;
+	    glViewport(w / 2 - (width / 2), h / 2 - (width/16*9 / 2), width, width/16*9);
 	    return;
 	}
 	WindowManager::WINDOW create_window(unsigned int w, unsigned int h, std::string title) {
@@ -237,9 +238,6 @@ namespace Core
 	    light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
 	    light_cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 	    light_cube.position = glm::vec3(light_pos.x * -1.0f, light_pos.y * -1.0f, light_pos.z * -1.0f);
-	    std::cout << light_cube.position.x << std::endl;
-	    std::cout << light_cube.position.y << std::endl;
-	    std::cout << light_cube.position.z << std::endl;
 	    
 	    molson(set_vector3_f)("object_light.specular", light_specular_colour, true, &object_default_shader);
 	    molson(set_vector3_f)("object_light.ambient", light_ambient_colour, true, &object_default_shader);
