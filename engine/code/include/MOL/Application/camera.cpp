@@ -17,10 +17,9 @@ namespace Core
 {
     namespace Camera
     {
-	// TODO: Refactor this whole code.
-	// mommy, help me
 	
-	// glm::vec3 position = glm::vec3(0.0f, 0.0f, 50.0f);
+	const float SPEED = 15.0;
+	
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 50.0f);
 	glm::vec3 FRONT = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 UP = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -29,10 +28,8 @@ namespace Core
 	float last_y = 600.0 / 2.0;
 	float pitch =  0.0f;
 	float yaw = -90.0f;
-	float fov = 45.0f;
 	
 	float rotation = 0.0f;
-	float speed = 15.0;
 	
 	bool first_mouse = false;
 	
@@ -40,6 +37,14 @@ namespace Core
 	GLFWwindow *m_window;
 	glm::mat4 m_view;
 	Shader *m_shader;
+	
+	float get_sensitivity()  { return SENSITIVITY; }
+	float get_rotation()     { return rotation; }
+	const float get_speed()  { return SPEED; }
+	
+	glm::vec3 get_position() { return position; }
+	glm::vec3 get_front()    { return FRONT; }
+	glm::vec3 get_up()       { return UP; }
 	
 	void update(glm::mat4 v, Shader *shader) {
 	    v = glm::lookAt(position, position + FRONT, UP);
@@ -96,7 +101,7 @@ namespace Core
 	
 	void move(double delta) {
 	    
-	    float camera_speed = static_cast<float>(speed * delta);
+	    float camera_speed = static_cast<float>(SPEED * delta);
 	    
 	    if (Core::InputManager::is_key_pressed(m_window, MOL_W)) position += camera_speed * FRONT;
 	    if (Core::InputManager::is_key_pressed(m_window, MOL_S)) position -= camera_speed * FRONT;
@@ -107,9 +112,6 @@ namespace Core
 	    if (Core::InputManager::is_key_pressed(m_window, MOL_SPACE)) position.y += camera_speed;
 	    
 	    if (m_shader != NULL && m_lighting_shader != NULL) {
-		float new_position[3] = {position.x, position.y, position.z};
-		
-		molson(set_vector3_f)("view_position", new_position, true, m_shader);
 		update(m_view, m_lighting_shader);
 		update(m_view, m_shader);
 	    }

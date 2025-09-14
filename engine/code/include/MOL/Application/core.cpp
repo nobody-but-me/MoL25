@@ -163,7 +163,7 @@ namespace Core
 	Shader object_default_shader;
 	Shader light_default_shader;
 	
-	glm::vec3 light_pos(-0.2f, -20.0f, -25.0f);
+	// glm::vec3 light_pos(-0.2f, -20.0f, -25.0f);
 	Atom cube, cube2, plane, light_cube;
 	
 	float light_specular_colour[3] = {1.0f, 1.0f, 1.0f};
@@ -183,12 +183,11 @@ namespace Core
 	    projection = glm::perspective(glm::radians(45.0f), (float)window.width / (float)window.height, 0.1f, 350.0f);
 	    view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -50.0f));
 	    
-	    // NOTE: likely not the better approach.
 	    if (molson(set_matrix4)("projection", &projection, true, &object_default_shader) != 0) { std::cerr << "[FAILED]: Perspective projection setting failed." << std::endl; return; }
 	    if (molson(set_matrix4)("view", &view, true, &object_default_shader) != 0) { std::cerr << "[FAILED]: View projection setting failed." << std::endl; return; }
 	    
-	    if (molson(set_matrix4)("projection", &projection, true, &light_default_shader) != 0) { std::cerr << "[FAILED]: Lighting perspective projection setting failed." << std::endl; return; }
-	    if (molson(set_matrix4)("view", &view, true, &light_default_shader) != 0) { std::cerr << "[FAILED]: Lighting view projection setting failed." << std::endl; return; }
+	    // if (molson(set_matrix4)("projection", &projection, true, &light_default_shader) != 0) { std::cerr << "[FAILED]: Lighting perspective projection setting failed." << std::endl; return; }
+	    // if (molson(set_matrix4)("view", &view, true, &light_default_shader) != 0) { std::cerr << "[FAILED]: Lighting view projection setting failed." << std::endl; return; }
 	    
 	    Core::Camera::init(window.buffer, window.width, view, &object_default_shader, &light_default_shader);
 	    // -- 
@@ -241,18 +240,16 @@ namespace Core
 	    plane.scale    = glm::vec3(50.0f, 50.0f, 50.0f);
 	    plane.rotation = glm::vec3(90.0f, 0.0f, 0.0f);
 	    
-	    Gfx::Renderer::init_light_atom(&light_cube, "Light");
-	    Gfx::Renderer::init_atom_vertexes(&light_cube, &light_default_shader);
+	    // Gfx::Renderer::init_light_atom(&light_cube, "Light");
+	    // Gfx::Renderer::init_atom_vertexes(&light_cube, &light_default_shader);
 	    
-	    light_cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	    light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
+	    // light_cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	    // light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
 	    
-	    float l[4] = {light_pos.x, light_pos.y, light_pos.z, 1.0f};
-	    molson(set_vector4_f)("object_light.vector", l, true, &object_default_shader);
-	    
-	    // for tests;
-	    if (l[3] == 0.0f) light_cube.position = glm::vec3(light_pos.x * -1.0f, light_pos.y * -1.0f, light_pos.z * -1.0f);
-	    else light_cube.position = light_pos;
+	    // float l[4] = {light_pos.x, light_pos.y, light_pos.z, 1.0f};
+	    // molson(set_vector4_f)("object_light.vector", l, true, &object_default_shader);
+	    // if (l[3] == 0.0f) light_cube.position = glm::vec3(light_pos.x * -1.0f, light_pos.y * -1.0f, light_pos.z * -1.0f);
+	    // else light_cube.position = light_pos;
 	    
 	    return;
 	}
@@ -261,17 +258,34 @@ namespace Core
 	    // plane.rotation.z = (float)glfwGetTime() * 15;
 	    
 	    // light_pos.x = std::cos((float)glfwGetTime() * 0.5f) * 15.0f;
-	    // light_pos.y = std::sin((float)glfwGetTime() * 0.5f) * 15.0f;
+	    // light_pos.z = std::sin((float)glfwGetTime() * 0.5f) * 15.0f;
+	    
+	    // float l[4] = {light_pos.x, light_pos.y, light_pos.z, 1.0f};
+	    // molson(set_vector4_f)("object_light.vector", l, true, &object_default_shader);
+	    // if (l[3] == 0.0f) light_cube.position = glm::vec3(light_pos.x * -1.0f, light_pos.y * -1.0f, light_pos.z * -1.0f);
+	    // else light_cube.position = light_pos;
 	    
 	    molson(set_vector3_f)("object_light.specular", light_specular_colour, true, &object_default_shader);
 	    molson(set_vector3_f)("object_light.ambient" , light_ambient_colour , true, &object_default_shader);
 	    molson(set_vector3_f)("object_light.diffuse" , light_diffuse_colour , true, &object_default_shader);
 	    
-	    molson(set_float)("object_light.quadratic", 0.0019f, true, &object_default_shader);
-	    molson(set_float)("object_light.constant" , 1.0f   , true, &object_default_shader);
-	    molson(set_float)("object_light.linear"   , 0.022f , true, &object_default_shader);
+	    // molson(set_float)("object_light.quadratic", 0.0019f, true, &object_default_shader);
+	    // molson(set_float)("object_light.constant" , 1.0f   , true, &object_default_shader);
+	    // molson(set_float)("object_light.linear"   , 0.022f , true, &object_default_shader);
 	    
 	    Core::Camera::move(delta_time);
+	    glm::vec3 camera_position = Core::Camera::get_position();
+	    glm::vec3 camera_front = Core::Camera::get_front();
+	    
+	    float cp[3]     = { camera_position.x, camera_position.y, camera_position.z };
+	    float cf[3]     = { camera_front.x, camera_front.y, camera_front.z };
+	    float cd[4]     = { cp[0], cp[1], cp[2], 1.0f };
+	    
+	    molson(set_float)("object_light.cut_off"      , glm::cos(glm::radians(12.5f)), true, &object_default_shader);
+	    molson(set_vector3_f)("object_light.direction", cf, true, &object_default_shader);
+	    molson(set_vector4_f)("object_light.vector"   , cd, true, &object_default_shader);
+	    
+	    molson(set_vector3_f)("view_position", cp, true, &object_default_shader);
 	    return;
 	}
 	void Engine::render() {
@@ -283,8 +297,8 @@ namespace Core
 	    Gfx::Renderer::set_atom_transform(&plane, &object_default_shader);
 	    Gfx::Renderer::render_atom(&plane, &object_default_shader);
 	    
-	    Gfx::Renderer::set_atom_transform(&light_cube, &light_default_shader);
-	    Gfx::Renderer::render_atom(&light_cube, &light_default_shader);
+	    // Gfx::Renderer::set_atom_transform(&light_cube, &light_default_shader);
+	    // Gfx::Renderer::render_atom(&light_cube, &light_default_shader);
 	    return;
 	}
 	

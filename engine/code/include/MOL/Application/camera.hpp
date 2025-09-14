@@ -13,6 +13,15 @@ namespace Core
     // no, daniel, it is not.
     namespace Camera
     {
+	
+	const float get_speed();
+	float get_sensitivity();
+	float get_rotation();
+	
+	glm::vec3 get_position();
+	glm::vec3 get_front();
+	glm::vec3 get_up();
+	
 	void init(GLFWwindow *w, int window_width, glm::mat4 view, Shader *shader, Shader *lighting_shader);
 	void update(glm::mat4 v, Shader *shader);
 	void move(double delta);
