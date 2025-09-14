@@ -167,7 +167,7 @@ namespace Core
 	Atom cube, cube2, plane, light_cube;
 	
 	float light_specular_colour[3] = {1.0f, 1.0f, 1.0f};
-	float light_ambient_colour[3]  = {0.1f, 0.1f, 0.1f};
+	float light_ambient_colour[3]  = {0.5f, 0.5f, 0.5f};
 	float light_diffuse_colour[3]  = {0.5f, 0.5f, 0.5f};
 	
 	// --------------------------------------------------

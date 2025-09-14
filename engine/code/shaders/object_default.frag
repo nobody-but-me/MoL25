@@ -66,9 +66,11 @@ void main() {
 	 vec3 diffuse  = object_light.diffuse  * diff * texture(texture_material.diffuse , texture_coords).rgb;
 	 vec3 ambient  = object_light.ambient         * texture(texture_material.diffuse , texture_coords).rgb;
 	 
-	 specular *= attenuation;
-	 diffuse  *= attenuation;
-	 ambient  *= attenuation;
+	 if (object_light.vector.w == 1.0f) {
+	     specular *= attenuation;
+	     diffuse  *= attenuation;
+	     ambient  *= attenuation;
+	 }
 	 
 	 result = ambient + diffuse + specular;
 	 
@@ -79,9 +81,11 @@ void main() {
 	 vec3 diffuse  = object_light.diffuse  * (diff * solid_material.diffuse );
 	 vec3 ambient  = object_light.ambient  * (solid_material.ambient        );
 	 
-	 specular *= attenuation;
-	 diffuse  *= attenuation;
-	 ambient  *= attenuation;
+	 if (object_light.vector.w == 1.0f) {
+	     specular *= attenuation;
+	     diffuse  *= attenuation;
+	     ambient  *= attenuation;
+	 }
 	 
 	 result = ambient + diffuse + specular;
 	 
