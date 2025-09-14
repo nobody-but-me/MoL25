@@ -10,7 +10,7 @@ echo "[INFO]: CREATING BUILD FOLDER..."
 mkdir -p ./build && cd ./build
 
 if [ "$build" = "y" ]; then
-    echo -e "[INFO]: GENERATING NINJA FILES..."
+    echo "[INFO]: GENERATING NINJA FILES..."
     cmake .. -G Ninja
 fi
 

@@ -235,7 +235,7 @@ namespace Gfx
 	void render_atom(Atom *object, Shader *shader) {
 	    molson(use_shader)(shader);
 	    
-	    // NOTE: that's so ugly.
+	    // NOTE: that's so ugly!
 	    if (object->light_vao == NULL) {
 		if (object->material.texture_path == "") {
 		    molson(set_bool)("is_textured", false, shader);

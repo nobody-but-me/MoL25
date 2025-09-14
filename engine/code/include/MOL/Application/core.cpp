@@ -164,7 +164,7 @@ namespace Core
 	Shader light_default_shader;
 	
 	glm::vec3 light_pos(-0.2f, -20.0f, -25.0f);
-	Atom cube, plane, light_cube;
+	Atom cube, cube2, plane, light_cube;
 	
 	float light_specular_colour[3] = {1.0f, 1.0f, 1.0f};
 	float light_ambient_colour[3]  = {0.1f, 0.1f, 0.1f};
@@ -198,6 +198,7 @@ namespace Core
 	    // main_texture.diffuse = glm::vec3(2.0f, 2.0f, 2.0f);
 	    // main_texture.ambient = glm::vec3(1.0f, 1.0f, 1.0f);
 	    
+	    // Texture material.
 	    Material texture;
 	    texture.specular_map_path = ASSETS_PATH"container2_specular.png";
 	    texture.specular_map_alpha = true;
@@ -208,6 +209,7 @@ namespace Core
 	    texture.specular = glm::vec3(0.5f, 0.5f, 0.5f);
 	    texture.shininess = 32.0f;
 	    
+	    // Solid colour material.
 	    Material colour;
 	    colour.specular = glm::vec3(0.5f, 0.5f, 0.5f);
 	    colour.diffuse = glm::vec3(0.2f, 0.2f, 0.2f);
@@ -219,10 +221,17 @@ namespace Core
 	    Gfx::Renderer::init_cube_atom(&cube, &texture, "Cube");
 	    Gfx::Renderer::init_atom_vertexes(&cube, &object_default_shader);
 	    
+	    Gfx::Renderer::init_cube_atom(&cube2, &texture, "Cube");
+	    Gfx::Renderer::init_atom_vertexes(&cube2, &object_default_shader);
+	    
 	    cube.colour   = glm::vec4(255.0f, 255.0f, 0.0f, 255.0f);
 	    cube.rotation = glm::vec3(0.0f, 25.0f, -25.0f);
 	    cube.scale    = glm::vec3(8.0f, 8.0f, 8.0f);
 	    cube.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	    
+	    cube2.colour   = cube.colour; cube2.scale    = cube.scale;
+	    cube2.rotation = glm::vec3(45.0f, 0.0f, 25.0f);
+	    cube2.position = glm::vec3(0.0f, 0.0f, 150.0f);
 	    
 	    Gfx::Renderer::init_rect_atom(&plane, &colour, "Plane");
 	    Gfx::Renderer::init_atom_vertexes(&plane, &object_default_shader);
@@ -235,28 +244,32 @@ namespace Core
 	    Gfx::Renderer::init_light_atom(&light_cube, "Light");
 	    Gfx::Renderer::init_atom_vertexes(&light_cube, &light_default_shader);
 	    
-	    light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
 	    light_cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	    light_cube.position = glm::vec3(light_pos.x * -1.0f, light_pos.y * -1.0f, light_pos.z * -1.0f);
+	    light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
 	    
-	    molson(set_vector3_f)("object_light.specular", light_specular_colour, true, &object_default_shader);
-	    molson(set_vector3_f)("object_light.ambient", light_ambient_colour, true, &object_default_shader);
-	    molson(set_vector3_f)("object_light.diffuse", light_diffuse_colour, true, &object_default_shader);
+	    float l[4] = {light_pos.x, light_pos.y, light_pos.z, 1.0f};
+	    molson(set_vector4_f)("object_light.vector", l, true, &object_default_shader);
 	    
-	    float l[4] = {light_pos.x, light_pos.y, light_pos.z, 0.0f};
-	    molson(set_vector4_f)("object_light.light_vector", l, true, &object_default_shader);
+	    // for tests;
+	    if (l[3] == 0.0f) light_cube.position = glm::vec3(light_pos.x * -1.0f, light_pos.y * -1.0f, light_pos.z * -1.0f);
+	    else light_cube.position = light_pos;
+	    
 	    return;
 	}
 	
 	void Engine::loop(double delta_time) {
-	    // cube.rotation = glm::vec3((float)glfwGetTime() * 50, (float)glfwGetTime() * 50, (float)glfwGetTime() * 50);
-	    plane.rotation.z = (float)glfwGetTime() * 15;
+	    // plane.rotation.z = (float)glfwGetTime() * 15;
 	    
 	    // light_pos.x = std::cos((float)glfwGetTime() * 0.5f) * 15.0f;
 	    // light_pos.y = std::sin((float)glfwGetTime() * 0.5f) * 15.0f;
 	    
-	    // float l[4] = {light_pos.x, light_pos.y, light_pos.z, 0.0f};
-	    // molson(set_vector4_f)("object_light.light_vector", l, true, &object_default_shader);
+	    molson(set_vector3_f)("object_light.specular", light_specular_colour, true, &object_default_shader);
+	    molson(set_vector3_f)("object_light.ambient" , light_ambient_colour , true, &object_default_shader);
+	    molson(set_vector3_f)("object_light.diffuse" , light_diffuse_colour , true, &object_default_shader);
+	    
+	    molson(set_float)("object_light.quadratic", 0.0019f, true, &object_default_shader);
+	    molson(set_float)("object_light.constant" , 1.0f   , true, &object_default_shader);
+	    molson(set_float)("object_light.linear"   , 0.022f , true, &object_default_shader);
 	    
 	    Core::Camera::move(delta_time);
 	    return;
@@ -264,6 +277,8 @@ namespace Core
 	void Engine::render() {
 	    Gfx::Renderer::set_atom_transform(&cube, &object_default_shader);
 	    Gfx::Renderer::render_atom(&cube, &object_default_shader);
+	    Gfx::Renderer::set_atom_transform(&cube2, &object_default_shader);
+	    Gfx::Renderer::render_atom(&cube2, &object_default_shader);
 	    
 	    Gfx::Renderer::set_atom_transform(&plane, &object_default_shader);
 	    Gfx::Renderer::render_atom(&plane, &object_default_shader);
