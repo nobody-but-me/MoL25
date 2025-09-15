@@ -71,6 +71,7 @@ namespace Core
 	    
 	    // Defining OpenGL blending filters.
 	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	    glEnable(GL_MULTISAMPLE);
 	    glEnable(GL_DEPTH_TEST);
 	    glEnable(GL_BLEND);
 	    
@@ -119,6 +120,7 @@ namespace Core
 	    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	    glfwWindowHint(GLFW_SAMPLES, 4);
 	    
 	    // -- Initializing main window.
 	    window = WindowManager::create_window(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_TITLE);
@@ -133,9 +135,9 @@ namespace Core
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Closing window with escape key.
-		if (InputManager::is_key_pressed(window.buffer, MOL_ESC)) {
-		    break;
-		}
+		// if (InputManager::is_key_pressed(window.buffer, MOL_ESC)) {
+		//     break;
+		// }
 		
 		// -- Updating viewport background colour.
 		WindowManager::update_viewport_background(&window);

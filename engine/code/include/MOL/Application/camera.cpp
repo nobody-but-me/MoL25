@@ -11,7 +11,10 @@
 #include <MOL/Application/core.hpp>
 #include <molson.h>
 
-#define SENSITIVITY 0.1f
+constexpr int FREE_MOUSE_MODE = 0;
+constexpr int VIEW_MODE = 1;
+
+constexpr float SENSITIVITY = 0.1f;
 
 namespace Core
 {
@@ -38,6 +41,8 @@ namespace Core
 	glm::mat4 m_view;
 	Shader *m_shader;
 	
+	int current_mode = VIEW_MODE;
+	
 	float get_sensitivity()  { return SENSITIVITY; }
 	float get_rotation()     { return rotation; }
 	const float get_speed()  { return SPEED; }
@@ -52,6 +57,7 @@ namespace Core
 	}
 	
 	static void mouse_callback(GLFWwindow* w, double x_position, double y_position) {
+	    if (current_mode == VIEW_MODE) {
 		float pos_x = static_cast<float>(x_position);
 		float pos_y = static_cast<float>(y_position);
 
@@ -80,6 +86,7 @@ namespace Core
 		f.y = sin(glm::radians(pitch));
 		f.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 		FRONT = glm::normalize(f);
+	    }
 	    return;
 	}
 	
@@ -95,25 +102,37 @@ namespace Core
 	    last_y = (window_width/4*3)/2;
 	    last_x = window_width/2;
 	    
-	    glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	    glfwSetCursorPosCallback(w, mouse_callback);
 	}
 	
 	void move(double delta) {
 	    
-	    float camera_speed = static_cast<float>(SPEED * delta);
-	    
-	    if (Core::InputManager::is_key_pressed(m_window, MOL_W)) position += camera_speed * FRONT;
-	    if (Core::InputManager::is_key_pressed(m_window, MOL_S)) position -= camera_speed * FRONT;
-	    if (Core::InputManager::is_key_pressed(m_window, MOL_A)) position -= glm::normalize(glm::cross(FRONT, UP)) * camera_speed;
-	    if (Core::InputManager::is_key_pressed(m_window, MOL_D)) position += glm::normalize(glm::cross(FRONT, UP)) * camera_speed;
-	    
-	    if (Core::InputManager::is_key_pressed(m_window, MOL_LSHIFT)) position.y -= camera_speed;
-	    if (Core::InputManager::is_key_pressed(m_window, MOL_SPACE)) position.y += camera_speed;
-	    
-	    if (m_shader != NULL && m_lighting_shader != NULL) {
-		update(m_view, m_lighting_shader);
-		update(m_view, m_shader);
+	    if (current_mode == VIEW_MODE) {
+		float camera_speed = static_cast<float>(SPEED * delta);
+		
+		if (Core::InputManager::is_key_pressed(m_window, MOL_W)) position += camera_speed * FRONT;
+		if (Core::InputManager::is_key_pressed(m_window, MOL_S)) position -= camera_speed * FRONT;
+		if (Core::InputManager::is_key_pressed(m_window, MOL_A)) position -= glm::normalize(glm::cross(FRONT, UP)) * camera_speed;
+		if (Core::InputManager::is_key_pressed(m_window, MOL_D)) position += glm::normalize(glm::cross(FRONT, UP)) * camera_speed;
+		
+		if (Core::InputManager::is_key_pressed(m_window, MOL_LSHIFT)) position.y -= camera_speed;
+		if (Core::InputManager::is_key_pressed(m_window, MOL_SPACE)) position.y += camera_speed;
+		
+		if (m_shader != NULL && m_lighting_shader != NULL) {
+		    update(m_view, m_lighting_shader);
+		    update(m_view, m_shader);
+		}
+		
+		if (Core::InputManager::is_key_pressed(m_window, MOL_ESC)) {
+		    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		    current_mode = FREE_MOUSE_MODE;
+		}
+	    }
+	    else if (current_mode == FREE_MOUSE_MODE) {
+		if (Core::InputManager::is_key_pressed(m_window, MOL_V)) {
+		    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		    current_mode = VIEW_MODE;
+		}
 	    }
 	}
     }
