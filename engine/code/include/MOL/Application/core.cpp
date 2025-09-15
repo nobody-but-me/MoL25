@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -163,17 +164,19 @@ namespace Core
 	Shader object_default_shader;
 	Shader light_default_shader;
 	
-	// glm::vec3 light_pos(-0.2f, -20.0f, -25.0f);
+	glm::vec3 light_pos(-0.2f, -20.0f, -25.0f);
 	Atom cube, cube2, plane, light_cube;
 	
-	float light_specular_colour[3] = {1.0f, 1.0f, 1.0f};
-	float light_ambient_colour[3]  = {0.5f, 0.5f, 0.5f};
-	float light_diffuse_colour[3]  = {0.5f, 0.5f, 0.5f};
+	float light_specular_colour[3] = { 1.0f, 1.0f, 1.0f };
+	float light_ambient_colour[3]  = { 0.2f, 0.2f, 0.2f };
+	float light_diffuse_colour[3]  = { 0.5f, 0.5f, 0.5f };
 	
 	// --------------------------------------------------
 	void Engine::ready() {
 	    std::cout << "[INFO]: Hello, MoL!" << std::endl;
-	    // -- TODO: re-place this whole logic to a better place.
+	    
+	    // -- TODO: re-place this whole logic to a better place. --
+	    
 	    projection = glm::mat4(1.0f);
 	    view       = glm::mat4(1.0f);
 	    
@@ -186,41 +189,71 @@ namespace Core
 	    if (molson(set_matrix4)("projection", &projection, true, &object_default_shader) != 0) { std::cerr << "[FAILED]: Perspective projection setting failed." << std::endl; return; }
 	    if (molson(set_matrix4)("view", &view, true, &object_default_shader) != 0) { std::cerr << "[FAILED]: View projection setting failed." << std::endl; return; }
 	    
-	    // if (molson(set_matrix4)("projection", &projection, true, &light_default_shader) != 0) { std::cerr << "[FAILED]: Lighting perspective projection setting failed." << std::endl; return; }
-	    // if (molson(set_matrix4)("view", &view, true, &light_default_shader) != 0) { std::cerr << "[FAILED]: Lighting view projection setting failed." << std::endl; return; }
+	    if (molson(set_matrix4)("projection", &projection, true, &light_default_shader) != 0) { std::cerr << "[FAILED]: Lighting perspective projection setting failed." << std::endl; return; }
+	    if (molson(set_matrix4)("view", &view, true, &light_default_shader) != 0) { std::cerr << "[FAILED]: Lighting view projection setting failed." << std::endl; return; }
 	    
 	    Core::Camera::init(window.buffer, window.width, view, &object_default_shader, &light_default_shader);
 	    // -- 
 	    
-	    // -- Material initialization
+	    // -- Materials initialization
 	    
-	    // main_texture.diffuse = glm::vec3(2.0f, 2.0f, 2.0f);
-	    // main_texture.ambient = glm::vec3(1.0f, 1.0f, 1.0f);
+	    // Texture material configuration;
+	    Material texture_material;
+	    texture_material.specular_map_path = ASSETS_PATH"container2_specular.png";
+	    texture_material.specular_map_alpha = true;
 	    
-	    // Texture material.
-	    Material texture;
-	    texture.specular_map_path = ASSETS_PATH"container2_specular.png";
-	    texture.specular_map_alpha = true;
+	    texture_material.texture_path = ASSETS_PATH"container2.png";
+	    texture_material.alpha = true;
 	    
-	    texture.texture_path = ASSETS_PATH"container2.png";
-	    texture.alpha = true;
+	    texture_material.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+	    texture_material.shininess = 32.0f;
 	    
-	    texture.specular = glm::vec3(0.5f, 0.5f, 0.5f);
-	    texture.shininess = 32.0f;
+	    // Solid colour material configuration;
+	    Material colour_material;
+	    colour_material.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+	    colour_material.diffuse = glm::vec3(0.2f, 0.2f, 0.2f);
+	    colour_material.ambient = glm::vec3(1.0f, 1.0f, 1.0f);
+	    colour_material.shininess = 8.0f;
 	    
-	    // Solid colour material.
-	    Material colour;
-	    colour.specular = glm::vec3(0.5f, 0.5f, 0.5f);
-	    colour.diffuse = glm::vec3(0.2f, 0.2f, 0.2f);
-	    colour.ambient = glm::vec3(1.0f, 1.0f, 1.0f);
-	    colour.shininess = 8.0f;
+	    // Directional Light material configuration;
+	    LightMaterial directional_light_material;
+	    directional_light_material.object_shader = &object_default_shader;
+	    
+	    directional_light_material.direction = glm::vec3(-0.2f, -1.0f, -0.3f);
+	    directional_light_material.specular  = glm::vec3(1.0f, 1.0f, 1.0f);
+	    directional_light_material.diffuse   = glm::vec3(1.0f, 1.0f, 1.0f);
+	    directional_light_material.ambient   = glm::vec3(0.2f, 0.2f, 0.2f);
+	    
+	    // Point Light material configuration;
+	    LightMaterial point_light_material;
+	    point_light_material.object_shader = &object_default_shader;
+	    
+	    point_light_material.quadratic = 0.0019f;
+	    point_light_material.constant  =    1.0f;
+	    point_light_material.linear    =  0.022f;
+	    
+	    point_light_material.specular  = glm::vec3(1.0f, 1.0f, 1.0f);
+	    point_light_material.diffuse   = glm::vec3(1.0f, 1.0f, 1.0f);
+	    point_light_material.ambient   = glm::vec3(0.2f, 0.2f, 0.2f);
+	    
+	    // SpotLight material configuration;
+	    LightMaterial spotlight_material;
+	    spotlight_material.object_shader = &object_default_shader;
+	    
+	    spotlight_material.direction = glm::vec3( 0.0f, -20.0f, 0.0f);
+	    spotlight_material.radius    = 15.0f;
+	    
+	    spotlight_material.specular  = glm::vec3(0.5f, 0.5f, 0.5f);
+	    spotlight_material.diffuse   = glm::vec3(1.0f, 1.0f, 1.0f);
+	    spotlight_material.ambient   = glm::vec3(0.1f, 0.1f, 0.1f);
 	    
 	    // --
 	    
-	    Gfx::Renderer::init_cube_atom(&cube, &texture, "Cube");
+	    // Initializing cube and cube2 objcets.
+	    Gfx::Renderer::init_cube_atom(&cube, &texture_material, "Cube");
 	    Gfx::Renderer::init_atom_vertexes(&cube, &object_default_shader);
 	    
-	    Gfx::Renderer::init_cube_atom(&cube2, &texture, "Cube");
+	    Gfx::Renderer::init_cube_atom(&cube2, &texture_material, "Cube");
 	    Gfx::Renderer::init_atom_vertexes(&cube2, &object_default_shader);
 	    
 	    cube.colour   = glm::vec4(255.0f, 255.0f, 0.0f, 255.0f);
@@ -229,10 +262,11 @@ namespace Core
 	    cube.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	    
 	    cube2.colour   = cube.colour; cube2.scale    = cube.scale;
-	    cube2.rotation = glm::vec3(45.0f, 0.0f, 25.0f);
-	    cube2.position = glm::vec3(0.0f, 0.0f, 150.0f);
+	    cube2.rotation = glm::vec3(45.0f, 0.0f,  25.0f);
+	    cube2.position = glm::vec3(0.0f, 0.0f, -150.0f);
 	    
-	    Gfx::Renderer::init_rect_atom(&plane, &colour, "Plane");
+	    // Initializing plane object.
+	    Gfx::Renderer::init_rect_atom(&plane, &colour_material, "Plane");
 	    Gfx::Renderer::init_atom_vertexes(&plane, &object_default_shader);
 	    
 	    plane.colour   = glm::vec4(100.0f, 80.0f, 80.0f, 255.0f);
@@ -240,55 +274,31 @@ namespace Core
 	    plane.scale    = glm::vec3(50.0f, 50.0f, 50.0f);
 	    plane.rotation = glm::vec3(90.0f, 0.0f, 0.0f);
 	    
-	    // Gfx::Renderer::init_light_atom(&light_cube, "Light");
-	    // Gfx::Renderer::init_atom_vertexes(&light_cube, &light_default_shader);
+	    // Initializing point-type light cube.
+	    Gfx::Renderer::init_light_atom(&light_cube, POINT_LIGHT, &point_light_material, "Light");
+	    Gfx::Renderer::init_atom_vertexes(&light_cube, &light_default_shader);
 	    
-	    // light_cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	    // light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
-	    
-	    // float l[4] = {light_pos.x, light_pos.y, light_pos.z, 1.0f};
-	    // molson(set_vector4_f)("object_light.vector", l, true, &object_default_shader);
-	    // if (l[3] == 0.0f) light_cube.position = glm::vec3(light_pos.x * -1.0f, light_pos.y * -1.0f, light_pos.z * -1.0f);
-	    // else light_cube.position = light_pos;
+	    light_cube.position = glm::vec3( 0.0f, 0.0f, 0.0f);
+	    light_cube.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	    light_cube.scale    = glm::vec3(5.0f, 5.0f, 5.0f);
 	    
 	    return;
 	}
 	
 	void Engine::loop(double delta_time) {
-	    // plane.rotation.z = (float)glfwGetTime() * 15;
+	    // Moving light cube in a circle-way.
+	    light_cube.position.x = std::cos((float)glfwGetTime() * 0.5f) * 15.0f;
+	    light_cube.position.z = std::sin((float)glfwGetTime() * 0.5f) * 15.0f;
 	    
-	    // light_pos.x = std::cos((float)glfwGetTime() * 0.5f) * 15.0f;
-	    // light_pos.z = std::sin((float)glfwGetTime() * 0.5f) * 15.0f;
-	    
-	    // float l[4] = {light_pos.x, light_pos.y, light_pos.z, 1.0f};
-	    // molson(set_vector4_f)("object_light.vector", l, true, &object_default_shader);
-	    // if (l[3] == 0.0f) light_cube.position = glm::vec3(light_pos.x * -1.0f, light_pos.y * -1.0f, light_pos.z * -1.0f);
-	    // else light_cube.position = light_pos;
-	    
-	    molson(set_vector3_f)("object_light.specular", light_specular_colour, true, &object_default_shader);
-	    molson(set_vector3_f)("object_light.ambient" , light_ambient_colour , true, &object_default_shader);
-	    molson(set_vector3_f)("object_light.diffuse" , light_diffuse_colour , true, &object_default_shader);
-	    
-	    // molson(set_float)("object_light.quadratic", 0.0019f, true, &object_default_shader);
-	    // molson(set_float)("object_light.constant" , 1.0f   , true, &object_default_shader);
-	    // molson(set_float)("object_light.linear"   , 0.022f , true, &object_default_shader);
-	    
+	    // Updating view position shader uniform variable.
 	    Core::Camera::move(delta_time);
 	    glm::vec3 camera_position = Core::Camera::get_position();
-	    glm::vec3 camera_front = Core::Camera::get_front();
-	    
-	    float cp[3]     = { camera_position.x, camera_position.y, camera_position.z };
-	    float cf[3]     = { camera_front.x, camera_front.y, camera_front.z };
-	    float cd[4]     = { cp[0], cp[1], cp[2], 1.0f };
-	    
-	    molson(set_float)("object_light.cut_off"      , glm::cos(glm::radians(12.5f)), true, &object_default_shader);
-	    molson(set_vector3_f)("object_light.direction", cf, true, &object_default_shader);
-	    molson(set_vector4_f)("object_light.vector"   , cd, true, &object_default_shader);
-	    
+	    float cp[3] = { camera_position.x, camera_position.y, camera_position.z };
 	    molson(set_vector3_f)("view_position", cp, true, &object_default_shader);
 	    return;
 	}
 	void Engine::render() {
+	    // Rendering all the present objects.
 	    Gfx::Renderer::set_atom_transform(&cube, &object_default_shader);
 	    Gfx::Renderer::render_atom(&cube, &object_default_shader);
 	    Gfx::Renderer::set_atom_transform(&cube2, &object_default_shader);
@@ -297,12 +307,13 @@ namespace Core
 	    Gfx::Renderer::set_atom_transform(&plane, &object_default_shader);
 	    Gfx::Renderer::render_atom(&plane, &object_default_shader);
 	    
-	    // Gfx::Renderer::set_atom_transform(&light_cube, &light_default_shader);
-	    // Gfx::Renderer::render_atom(&light_cube, &light_default_shader);
+	    Gfx::Renderer::set_atom_transform(&light_cube, &light_default_shader);
+	    Gfx::Renderer::render_atom(&light_cube, &light_default_shader);
 	    return;
 	}
 	
 	int Engine::destroy() {
+	    // Destroying dependencies. The objects do not have to be destroyed since their destroyed is called automatically.
 	    molson(destroy_shader)(&object_default_shader);
 	    WindowManager::destroy_window(&window);
 	    return 0;

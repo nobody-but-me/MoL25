@@ -58,10 +58,8 @@ enum KEYCODES {
 
 namespace Core
 {
-    
     namespace WindowManager
     {
-	
 	typedef struct {
 	    unsigned int IDEAL_HEIGHT;
 	    unsigned int IDEAL_WIDTH;
@@ -86,7 +84,6 @@ namespace Core
     
     namespace Application
     {
-	
 	// Main engine class.
 	class Engine: public Utils::Singleton<Engine>
 	{

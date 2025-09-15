@@ -11,6 +11,10 @@
 #include <MOL/Gfx/object.hpp>
 #include <molson.h>
 
+constexpr int DIRECTIONAL_LIGHT = 0;
+constexpr int POINT_LIGHT       = 1;
+constexpr int SPOTLIGHT         = 2;
+
 constexpr float RECT_VERTEX_DATA[] = {
     0.0f, 1.0f, 1.0f,  0.0f, 1.0f,  0.0f, 0.0f, -1.0f,
     1.0f, 0.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f, -1.0f,
@@ -109,16 +113,13 @@ constexpr float LIGHT_VERTEX_DATA[] = {
 
 namespace Gfx
 {
-    
-    namespace Renderer // TODO: Perhaps that's not the best approach. Perhaps a renderer class would be more correct.
+     // TODO: Perhaps that's not the best approach. Perhaps a renderer class would be more correct.
+    namespace Renderer
     {
-	
 	// -- 3d-ish atoms;
+	int init_light_atom(Atom *light_object, int type, LightMaterial *material, std::string name);
 	int init_cube_atom(Atom *cube_object, Material *material, std::string name);
-	int init_light_atom(Atom *light_object, std::string name);
-	// --
 	// -- 2d-ish atoms;
-	// int init_sprite_atom(Atom *sprite_object, std::string texture_path, bool alpha, std::string name);
 	int init_rect_atom(Atom *rect_object, Material *material, std::string name);
 	// --
 	
@@ -127,7 +128,6 @@ namespace Gfx
 	
 	int set_atom_transform(Atom *object, Shader *shader);
 	void render_atom(Atom *object, Shader *shader);
-	
     }
     
 }

@@ -39,7 +39,6 @@ uniform vec3 light_position;
 uniform vec3 view_position;
 
 uniform vec3 light_colour;
-uniform vec3 colour;
 
 in vec2 texture_coords;
 in vec3 frag_position;
@@ -63,7 +62,6 @@ void main() {
      float attenuation = 1.0f / (object_light.constant + object_light.linear * distance + object_light.quadratic * (distance * distance));
      
      vec3 result;
-     
      if (is_textured == true) {
 	 float spec = pow(max(dot(view_dir, reflect_dir), 0.0f), texture_material.shine);
 	 
@@ -71,12 +69,9 @@ void main() {
 	 vec3 diffuse  = object_light.diffuse  * diff * texture(texture_material.diffuse , texture_coords).rgb;
 	 vec3 ambient  = object_light.ambient         * texture(texture_material.diffuse , texture_coords).rgb;
 	 
-	 // if (object_light.vector.w == 1.0f) {
-	 //     specular *= attenuation;
-	 //     diffuse  *= attenuation;
-	 //     ambient  *= attenuation;
-	 // }
-	 
+	 if (object_light.cut_off == 0.0f) {
+	     if (object_light.vector.w == 1.0f) { specular *= attenuation; diffuse  *= attenuation; ambient  *= attenuation; }
+	 }
 	 result = ambient + diffuse + specular;
 	 
      } else {
@@ -86,22 +81,21 @@ void main() {
 	 vec3 diffuse  = object_light.diffuse  * (diff * solid_material.diffuse );
 	 vec3 ambient  = object_light.ambient  * (solid_material.ambient        );
 	 
-	 // if (object_light.vector.w == 1.0f) {
-	 //     specular *= attenuation;
-	 //     diffuse  *= attenuation;
-	 //     ambient  *= attenuation;
-	 // }
-	 
+	 if (object_light.cut_off == 0.0f) {
+	     if (object_light.vector.w == 1.0f) { specular *= attenuation; diffuse  *= attenuation; ambient  *= attenuation; }
+	 }
 	 result = ambient + diffuse + specular;
 	 
      }
-     float theta = dot(light_direction, normalize(-object_light.direction));
-     
-     if (theta > object_light.cut_off) {
-         frag_colour = vec4(result, 1.0f);
-     } else {
-         if (is_textured == true ) frag_colour = vec4(object_light.ambient * texture(texture_material.diffuse , texture_coords).rgb, 1.0f);
-	 else                      frag_colour = vec4(object_light.ambient * solid_material.ambient, 1.0f);
-     }
+     if (object_light.cut_off != 0.0f) {
+         float theta = dot(light_direction, normalize(-object_light.direction));
+         
+         if (theta > object_light.cut_off) frag_colour = vec4(result, 1.0f);
+         else {
+             if (is_textured == true ) frag_colour = vec4(object_light.ambient * texture(texture_material.diffuse , texture_coords).rgb, 1.0f);
+             else                      frag_colour = vec4(object_light.ambient * solid_material.ambient, 1.0f);
+         }
+     } 
+     else frag_colour = vec4(result, 1.0f);
 }
 
