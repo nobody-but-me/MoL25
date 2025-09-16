@@ -243,7 +243,8 @@ namespace Core
 	    spotlight_material.object_shader = &object_default_shader;
 	    
 	    spotlight_material.direction = glm::vec3( 0.0f, -20.0f, 0.0f);
-	    spotlight_material.radius    = 15.0f;
+	    spotlight_material.outer_radius = 15.5f;
+	    spotlight_material.radius       = 12.5f;
 	    
 	    spotlight_material.specular  = glm::vec3(0.5f, 0.5f, 0.5f);
 	    spotlight_material.diffuse   = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -277,7 +278,7 @@ namespace Core
 	    plane.rotation = glm::vec3(90.0f, 0.0f, 0.0f);
 	    
 	    // Initializing point-type light cube.
-	    Gfx::Renderer::init_light_atom(&light_cube, POINT_LIGHT, &point_light_material, "Light");
+	    Gfx::Renderer::init_light_atom(&light_cube, SPOTLIGHT, &spotlight_material, "Light");
 	    Gfx::Renderer::init_atom_vertexes(&light_cube, &light_default_shader);
 	    
 	    light_cube.position = glm::vec3( 0.0f, 0.0f, 0.0f);

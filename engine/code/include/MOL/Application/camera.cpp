@@ -102,6 +102,7 @@ namespace Core
 	    last_y = (window_width/4*3)/2;
 	    last_x = window_width/2;
 	    
+	    glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	    glfwSetCursorPosCallback(w, mouse_callback);
 	}
 	

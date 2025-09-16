@@ -13,6 +13,7 @@
 
 typedef struct
 {
+    float outer_radius;
     float radius;
     
     glm::vec3 direction;

@@ -212,7 +212,8 @@ namespace Gfx
 		    molson(set_vector3_f)("object_light.direction", ld, false, object->light_material.object_shader);
 		    molson(set_vector4_f)("object_light.vector"   , lv, false, object->light_material.object_shader);
 		    
-		    molson(set_float)("object_light.cut_off", glm::cos(glm::radians(object->light_material.radius)), true, object->light_material.object_shader);
+		    molson(set_float)("object_light.outer_radius", glm::cos(glm::radians(object->light_material.outer_radius)), true, object->light_material.object_shader);
+		    molson(set_float)("object_light.radius", glm::cos(glm::radians(object->light_material.radius)), true, object->light_material.object_shader);
 		}
 		float spec[3] = { object->light_material.specular.x , object->light_material.specular.y , object->light_material.specular.z };
 		float ambt[3] = { object->light_material.ambient.x  , object->light_material.ambient.y  , object->light_material.ambient.z  };
